@@ -28,6 +28,49 @@ public class TransXlsxImpl implements TransFile {
     ProgressDAO progressDAO;
 
     public long calculateTotalProgress(String srcFile) {
+        long total = 0;
+        FileInputStream is = null;
+        Workbook workbook = null;
+        try {
+            String fe = FilenameUtils.getExtension(srcFile);
+            is = new FileInputStream(srcFile);
+
+            if (fe.equalsIgnoreCase("xlsx")) {
+                workbook = new XSSFWorkbook(is);
+            } else {
+                workbook = new HSSFWorkbook(is);
+            }
+            int numberOfSheets = workbook.getNumberOfSheets();
+            for (int i = 0; i < numberOfSheets; i++) {
+                Sheet sheetAt = workbook.getSheetAt(i);
+                int rows = sheetAt.getLastRowNum();
+                for (int j = 0; j < rows; j++) {
+                    Row row = sheetAt.getRow(j);
+                    int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+                    for (int k = 0; k < physicalNumberOfCells; k++) {
+                        Cell cell = row.getCell(k);
+                        CellType cellType = cell.getCellType();
+                        if (cellType == CellType.STRING) {
+                            total ++;
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (workbook != null) {
+                    workbook.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
+                return total;
+            } catch (IOException e) {
+            }
+        }
         return 0;
     }
 
@@ -46,13 +89,13 @@ public class TransXlsxImpl implements TransFile {
                 workbook = new HSSFWorkbook(is);
             }
             int numberOfSheets = workbook.getNumberOfSheets();
-            for (int i=0;i<numberOfSheets;i++) {
+            for (int i = 0; i < numberOfSheets; i++) {
                 Sheet sheetAt = workbook.getSheetAt(i);
                 int rows = sheetAt.getLastRowNum();
-                for (int j=0; j < rows; j++) {
+                for (int j = 0; j < rows; j++) {
                     Row row = sheetAt.getRow(j);
                     int physicalNumberOfCells = row.getPhysicalNumberOfCells();
-                    for (int k=0; k < physicalNumberOfCells; k++) {
+                    for (int k = 0; k < physicalNumberOfCells; k++) {
                         Cell cell = row.getCell(k);
                         CellType cellType = cell.getCellType();
                         if (cellType == CellType.STRING) {
@@ -63,7 +106,6 @@ public class TransXlsxImpl implements TransFile {
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -72,12 +114,14 @@ public class TransXlsxImpl implements TransFile {
                     FileOutputStream outStream;
                     outStream = new FileOutputStream(desFile);
                     workbook.write(outStream);
+                    workbook.close();
                     outStream.close();
                 }
                 if (is != null) {
                     is.close();
                 }
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,8 +25,9 @@ public class TransDocxImpl implements TransFile {
 
     public long calculateTotalProgress(String srcFile) {
         long total = 0;
+        XWPFDocument document = null;
         try {
-            XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
+            document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
             Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
             while (itPara.hasNext()) {
                 XWPFParagraph paragraph = itPara.next();
@@ -60,18 +62,27 @@ public class TransDocxImpl implements TransFile {
                     }
                 }
             }
-            document.close();
-            return total;
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (document != null) {
+                    document.close();
+                    return total;
+                }
+            }catch (Exception e) {
+
+            }
         }
         return 0;
     }
 
     @Override
     public void translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) {
+        XWPFDocument document = null;
         try {
-            XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
+            document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
             Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
             while (itPara.hasNext()) {
                 XWPFParagraph paragraph = itPara.next();
@@ -114,12 +125,21 @@ public class TransDocxImpl implements TransFile {
                     }
                 }
             }
-            FileOutputStream outStream = null;
-            outStream = new FileOutputStream(desFile);
-            document.write(outStream);
-            outStream.close();
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (document != null) {
+                    FileOutputStream outStream = null;
+                    outStream = new FileOutputStream(desFile);
+                    document.write(outStream);
+                    document.close();
+                    outStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ public class TransFactoryImpl implements TransFactory {
 
     @Override
     public TransFile create(String ext) {
-        if (ext.equals("doc")) {
+        if (ext.equalsIgnoreCase("doc")) {
             return transDoc;
         } else if (ext.equalsIgnoreCase("docx")) {
             return transDocx;
