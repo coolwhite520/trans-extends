@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,7 +25,6 @@ public class TransDocxImpl implements TransFile {
     @Autowired
     ProgressDAO progressDAO;
 
-    @Override
     public long calculateTotalProgress(String srcFile) {
         return 0;
     }

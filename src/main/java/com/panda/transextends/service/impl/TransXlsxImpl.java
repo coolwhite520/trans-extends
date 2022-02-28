@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TransXlsxImpl implements TransFile {
-    @Override
     public long calculateTotalProgress(String srcFile) {
         return 0;
     }

@@ -1,7 +1,7 @@
 package com.panda.transextends.service.impl;
 
-import com.panda.transextends.mapper.ProgressDAO;
 import com.panda.transextends.service.TransFile;
+import com.panda.transextends.utils.FormatConvert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 public class TransDocImpl implements TransFile {
 
     @Autowired
-    ProgressDAO progressDAO;
+    TransDocxImpl transDocx;
 
     @Override
-    public long calculateTotalProgress(String srcFile) {
-        return 0;
-    }
-
-    @Override
-    public void translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) {
-
+    public void translate(int rowId, String srcLang, String desLang, String srcFile, String desFile)  {
+        try {
+            String s = FormatConvert.convertDoc2Docx(srcFile);
+            transDocx.translate(rowId, srcLang, desLang, s, desFile);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

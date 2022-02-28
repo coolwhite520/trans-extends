@@ -26,7 +26,6 @@ public class TransFactoryImpl implements TransFactory {
     @Autowired
     TransXlsxImpl transXlsx;
 
-
     @Override
     public TransFile create(String ext) {
         if (ext.equals("doc")) {
