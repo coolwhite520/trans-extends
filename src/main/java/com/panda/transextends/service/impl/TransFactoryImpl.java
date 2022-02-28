@@ -5,6 +5,7 @@ import com.panda.transextends.service.TransFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class TransFactoryImpl implements TransFactory {
 
@@ -15,13 +16,7 @@ public class TransFactoryImpl implements TransFactory {
     TransDocxImpl transDocx;
 
     @Autowired
-    TransPPtImpl transPPt;
-
-    @Autowired
     TransPPtxImpl transPPtx;
-
-    @Autowired
-    TransXlsImpl transXls;
 
     @Autowired
     TransXlsxImpl transXlsx;
@@ -30,15 +25,11 @@ public class TransFactoryImpl implements TransFactory {
     public TransFile create(String ext) {
         if (ext.equals("doc")) {
             return transDoc;
-        } else if (ext.equals("docx")) {
+        } else if (ext.equalsIgnoreCase("docx")) {
             return transDocx;
-        } else if (ext.equals("ppt")) {
-            return transPPt;
-        } else if (ext.equals("pptx")) {
+        }  else if (ext.equalsIgnoreCase("pptx") || ext.equalsIgnoreCase("ppt")) {
             return transPPtx;
-        } else if (ext.equals("xls")) {
-            return transXls;
-        } else if (ext.equals("xlsx")) {
+        }  else if (ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("xls")) {
             return transXlsx;
         }
         return null;

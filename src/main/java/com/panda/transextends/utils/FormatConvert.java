@@ -1,10 +1,5 @@
 package com.panda.transextends.utils;
 
-//import com.aspose.words.SaveFormat;
-import org.springframework.util.FileCopyUtils;
-
-import java.io.*;
-
 public class FormatConvert {
     public static String convertDoc2Docx(String srcFile) {
         try {

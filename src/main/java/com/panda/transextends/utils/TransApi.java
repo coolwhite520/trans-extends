@@ -1,4 +1,4 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.panda.transextends.utils.RedisUtil;
