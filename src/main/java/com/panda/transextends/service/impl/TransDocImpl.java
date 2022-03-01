@@ -1,7 +1,6 @@
 package com.panda.transextends.service.impl;
 
 import com.aspose.words.SaveFormat;
-import com.panda.transextends.mapper.ProgressDAO;
 import com.panda.transextends.service.TransFile;
 import com.panda.transextends.utils.FormatConvert;
 import org.apache.poi.hwpf.HWPFDocument;

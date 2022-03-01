@@ -1,7 +1,7 @@
 package com.panda.transextends.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.panda.transextends.mapper.ProgressDAO;
+import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.service.TransFile;
 import com.panda.transextends.utils.TransApi;
 import org.apache.poi.ooxml.POIXMLDocument;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class TransDocxImpl implements TransFile {
     TransApi transApi;
 
     @Autowired
-    ProgressDAO progressDAO;
+    RecordDAO recordDAO;
 
     public long calculateTotalProgress(String srcFile) throws Exception {
         long total = 0;
@@ -87,7 +86,7 @@ public class TransDocxImpl implements TransFile {
                     if (percent != 100 * current/total) {
                         percent = (int) (100 * current/total);
                         if (percent >100) percent = 100;
-                        progressDAO.updateProgress(rowId, percent);
+                        recordDAO.updateProgress(rowId, percent);
                     }
                 }
             }
@@ -115,7 +114,7 @@ public class TransDocxImpl implements TransFile {
                                     if (percent != 100 * current/total) {
                                         percent = (int) (100 * current/total);
                                         if (percent >100) percent = 100;
-                                        progressDAO.updateProgress(rowId, percent);
+                                        recordDAO.updateProgress(rowId, percent);
                                     }
                                 }
                             }

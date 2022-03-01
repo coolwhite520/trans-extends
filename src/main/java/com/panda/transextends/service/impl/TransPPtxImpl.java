@@ -1,7 +1,7 @@
 package com.panda.transextends.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.panda.transextends.mapper.ProgressDAO;
+import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.service.TransFile;
 import com.panda.transextends.utils.TransApi;
 import org.apache.commons.io.FilenameUtils;
@@ -25,7 +25,7 @@ public class TransPPtxImpl implements TransFile {
     TransApi transApi;
 
     @Autowired
-    ProgressDAO progressDAO;
+    RecordDAO recordDAO;
 
     public long calculateTotalProgress(String srcFile) throws Exception {
         long total = 0;
@@ -121,7 +121,7 @@ public class TransPPtxImpl implements TransFile {
                             if (percent != 100 * current/total) {
                                 percent = (int) (100 * current/total);
                                 if (percent >100) percent = 100;
-                                progressDAO.updateProgress(rowId, percent);
+                                recordDAO.updateProgress(rowId, percent);
                             }
                         }
                     } else if (shape instanceof XSLFTextShape) {// 文本框
@@ -133,7 +133,7 @@ public class TransPPtxImpl implements TransFile {
                             if (percent != 100 * current/total) {
                                 percent = (int) (100 * current/total);
                                 if (percent >100) percent = 100;
-                                progressDAO.updateProgress(rowId, percent);
+                                recordDAO.updateProgress(rowId, percent);
                             }
                         }
                     } else if (shape instanceof HSLFTable) {// 表格
@@ -151,7 +151,7 @@ public class TransPPtxImpl implements TransFile {
                                         if (percent != 100 * current/total) {
                                             percent = (int) (100 * current/total);
                                             if (percent >100) percent = 100;
-                                            progressDAO.updateProgress(rowId, percent);
+                                            recordDAO.updateProgress(rowId, percent);
                                         }
                                     }
                                 }
@@ -172,7 +172,7 @@ public class TransPPtxImpl implements TransFile {
                                         if (percent != 100 * current/total) {
                                             percent = (int) (100 * current/total);
                                             if (percent >100) percent = 100;
-                                            progressDAO.updateProgress(rowId, percent);
+                                            recordDAO.updateProgress(rowId, percent);
                                         }
                                     }
                                 }

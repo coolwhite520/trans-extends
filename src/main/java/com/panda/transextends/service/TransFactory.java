@@ -1,5 +1,5 @@
 package com.panda.transextends.service;
 
 public interface TransFactory {
-    TransFile create(String ext);
+    TransFile create(int transType, String ext);
 }

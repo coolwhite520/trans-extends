@@ -1,24 +1,18 @@
 package com.panda.transextends.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.panda.transextends.mapper.ProgressDAO;
+import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.service.TransFile;
 import com.panda.transextends.utils.TransApi;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Service
 public class TransXlsxImpl implements TransFile {
@@ -26,7 +20,7 @@ public class TransXlsxImpl implements TransFile {
     TransApi transApi;
 
     @Autowired
-    ProgressDAO progressDAO;
+    RecordDAO recordDAO;
 
     public long calculateTotalProgress(String srcFile) throws Exception {
         long total = 0;
@@ -98,7 +92,7 @@ public class TransXlsxImpl implements TransFile {
                             if (percent != 100 * current/total) {
                                 percent = (int) (100 * current/total);
                                 if (percent >100) percent = 100;
-                                progressDAO.updateProgress(rowId, percent);
+                                recordDAO.updateProgress(rowId, percent);
                             }
                         }
 
