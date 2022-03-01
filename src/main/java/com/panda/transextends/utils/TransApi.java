@@ -3,6 +3,7 @@ package com.panda.transextends.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.panda.transextends.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -21,6 +22,11 @@ import java.util.Map;
 
 @Service
 public class TransApi {
+    @Value("${core.host}")
+    private String host;
+
+    @Value("${core.port}")
+    private int port;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -42,7 +48,7 @@ public class TransApi {
             if(redisUtil.exists(key)) {
                 return redisUtil.get(key);
             }
-            String reqUrl = "http://192.168.3.32:5000/translate";
+            String reqUrl = String.format("http://%s:%s/translate", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
