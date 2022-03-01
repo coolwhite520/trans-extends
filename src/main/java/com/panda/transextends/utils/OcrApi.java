@@ -1,17 +1,21 @@
 package com.panda.transextends.utils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.panda.transextends.pojo.OcrEntity;
+import jdk.nashorn.internal.objects.annotations.Constructor;
+import org.ini4j.Ini;
+import org.ini4j.Profile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import javax.annotation.PostConstruct;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 
 @Component
 public class OcrApi {
@@ -21,11 +25,30 @@ public class OcrApi {
     @Value("${ocr.port}")
     private int port;
 
+    private Set<Map.Entry<String, String>> entries;
+
+    @PostConstruct
+    private void init() {
+        try {
+            URL resource = Thread.currentThread().getContextClassLoader().getResource("ocr_langs.ini");
+            Ini ini = new Ini();
+            ini.load(resource);
+            // 读取 system
+            Profile.Section section = ini.get("langs");
+            entries = section.entrySet();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public String convert2ocrLang(String srcLang) {
+        for (Map.Entry<String, String> entry : entries) {
+            if (srcLang.equals(entry.getKey())) return entry.getValue();
+        }
         return "";
     }
 
-    public boolean detected(String srcLang, String srcFile) {
+    public List<OcrEntity> extract(String srcLang, String srcFile) {
         try {
             String reqUrl = String.format("http://%s:%s/extract", host, port);
             URL url = new URL(reqUrl);
@@ -49,13 +72,14 @@ public class OcrApi {
                 while ((responseLine = br.readLine()) != null) {
                     response.append(responseLine.trim());
                 }
-                con.disconnect();
                 JSONObject jsonObject = JSONObject.parseObject(response.toString());
                 int code = jsonObject.getIntValue("code");
                 if (code == 200) {
-                    return true;
+                    JSONArray data = jsonObject.getJSONArray("data");
+                    List<OcrEntity> ocrEntities = data.toJavaList(OcrEntity.class);
+                    return ocrEntities;
                 }
-                return false;
+                return null;
             }
 
         } catch (Exception e) {
