@@ -27,151 +27,160 @@ public class TransPPtxImpl implements TransFile {
     @Autowired
     ProgressDAO progressDAO;
 
-    public long calculateTotalProgress(String srcFile) {
+    public long calculateTotalProgress(String srcFile) throws Exception {
         long total = 0;
         InputStream is = null;
         SlideShow slideShow = null;
-        try {
-            String fe = FilenameUtils.getExtension(srcFile);
-            File file = new File(srcFile);
-            is = new FileInputStream(file);
-            if (fe.equalsIgnoreCase("ppt")) {
-                slideShow = new HSLFSlideShow(is);
-            } else {
-                slideShow = new XMLSlideShow(is);
-            }
-            if (slideShow != null) {
-                // 一页一页读取
-                for (Slide slide : (List<Slide>) slideShow.getSlides()) {
-                    List shapes = slide.getShapes();
-                    if (shapes != null) {
-                        for (int i = 0; i < shapes.size(); i++) {
-                            Shape shape = (Shape) shapes.get(i);
-                            if (shape instanceof HSLFTextShape) {// 文本框
-                                String text = ((HSLFTextShape) shape).getText();
-                                if (StrUtil.isNotBlank(text)) {
-                                    total++;
-                                }
-                            }
-                            else if (shape instanceof XSLFTextShape) {// 文本框
-                                String text = ((XSLFTextShape) shape).getText();
-                                if (StrUtil.isNotBlank(text)) {
-                                    total++;
-                                }
-                            }
-                            else if (shape instanceof HSLFTable) {// 表格
-                                int rowSize = ((HSLFTable) shape).getNumberOfRows();
-                                int columnSize = ((HSLFTable) shape).getNumberOfColumns();
-                                for (int rowNum = 0; rowNum < rowSize; rowNum++) {
-                                    for (int columnNum = 0; columnNum < columnSize; columnNum++) {
-                                        HSLFTableCell cell = ((HSLFTable) shape).getCell(rowNum, columnNum);
-                                        if (cell != null) {
-                                            String text = cell.getText();
-                                            if (StrUtil.isNotBlank(text)) {
-                                                total++;
-                                            }
-                                        }
+        String fe = FilenameUtils.getExtension(srcFile);
+        File file = new File(srcFile);
+        is = new FileInputStream(file);
+        if (fe.equalsIgnoreCase("ppt")) {
+            slideShow = new HSLFSlideShow(is);
+        } else {
+            slideShow = new XMLSlideShow(is);
+        }
+        for (Slide slide : (List<Slide>) slideShow.getSlides()) {
+            List shapes = slide.getShapes();
+            if (shapes != null) {
+                for (int i = 0; i < shapes.size(); i++) {
+                    Shape shape = (Shape) shapes.get(i);
+                    if (shape instanceof HSLFTextShape) {// 文本框
+                        String text = ((HSLFTextShape) shape).getText();
+                        text = text.trim();
+                        if (StrUtil.isNotBlank(text)) {
+                            total++;
+                        }
+                    } else if (shape instanceof XSLFTextShape) {// 文本框
+                        String text = ((XSLFTextShape) shape).getText();
+                        text = text.trim();
+                        if (StrUtil.isNotBlank(text)) {
+                            total++;
+                        }
+                    } else if (shape instanceof HSLFTable) {// 表格
+                        int rowSize = ((HSLFTable) shape).getNumberOfRows();
+                        int columnSize = ((HSLFTable) shape).getNumberOfColumns();
+                        for (int rowNum = 0; rowNum < rowSize; rowNum++) {
+                            for (int columnNum = 0; columnNum < columnSize; columnNum++) {
+                                HSLFTableCell cell = ((HSLFTable) shape).getCell(rowNum, columnNum);
+                                if (cell != null) {
+                                    String text = cell.getText();
+                                    text = text.trim();
+                                    if (StrUtil.isNotBlank(text)) {
+                                        total++;
                                     }
                                 }
                             }
-                            else if (shape instanceof XSLFTable) {// 表格
-                                int rowSize = ((XSLFTable) shape).getNumberOfRows();
-                                int columnSize = ((XSLFTable) shape).getNumberOfColumns();
-                                for (int rowNum = 0; rowNum < rowSize; rowNum++) {
-                                    for (int columnNum = 0; columnNum < columnSize; columnNum++) {
-                                        XSLFTableCell cell = ((XSLFTable) shape).getCell(rowNum, columnNum);
-                                        if (cell != null) {
-                                            String text = cell.getText();
-                                            if (StrUtil.isNotBlank(text)) {
-                                                total++;
-                                            }
-                                        }
+                        }
+                    } else if (shape instanceof XSLFTable) {// 表格
+                        int rowSize = ((XSLFTable) shape).getNumberOfRows();
+                        int columnSize = ((XSLFTable) shape).getNumberOfColumns();
+                        for (int rowNum = 0; rowNum < rowSize; rowNum++) {
+                            for (int columnNum = 0; columnNum < columnSize; columnNum++) {
+                                XSLFTableCell cell = ((XSLFTable) shape).getCell(rowNum, columnNum);
+                                if (cell != null) {
+                                    String text = cell.getText();
+                                    text = text.trim();
+                                    if (StrUtil.isNotBlank(text)) {
+                                        total++;
                                     }
                                 }
                             }
                         }
                     }
                 }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (slideShow != null) {
-                    slideShow.close();
-                }
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
             }
         }
-        return 0;
+        slideShow.close();
+        is.close();
+        return total;
     }
 
     @Override
-    public void translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) {
+    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+        long total = calculateTotalProgress(srcFile);
+        long current = 0;
+        int percent = 0;
         InputStream is = null;
         SlideShow slideShow = null;
-        try {
-            String fe = FilenameUtils.getExtension(srcFile);
-            File file = new File(srcFile);
-            is = new FileInputStream(file);
-            if (fe.equalsIgnoreCase("ppt")) {
-                slideShow = new HSLFSlideShow(is);
-            } else {
-                slideShow = new XMLSlideShow(is);
-            }
-            if (slideShow != null) {
-                // 一页一页读取
-                for (Slide slide : (List<Slide>) slideShow.getSlides()) {
-                    List shapes = slide.getShapes();
-                    if (shapes != null) {
-                        for (int i = 0; i < shapes.size(); i++) {
-                            Shape shape = (Shape) shapes.get(i);
-                            if (shape instanceof HSLFTextShape) {// 文本框
-                                String text = ((HSLFTextShape) shape).getText();
-                                if (StrUtil.isNotBlank(text)) {
-                                    String transContent = transApi.translate(srcLang, desLang, text);
-                                    ((HSLFTextShape) shape).setText(transContent);
-                                }
+        String fe = FilenameUtils.getExtension(srcFile);
+        File file = new File(srcFile);
+        is = new FileInputStream(file);
+        if (fe.equalsIgnoreCase("ppt")) {
+            slideShow = new HSLFSlideShow(is);
+        } else {
+            slideShow = new XMLSlideShow(is);
+        }
+        // 一页一页读取
+        for (Slide slide : (List<Slide>) slideShow.getSlides()) {
+            List shapes = slide.getShapes();
+            if (shapes != null) {
+                for (int i = 0; i < shapes.size(); i++) {
+                    Shape shape = (Shape) shapes.get(i);
+                    if (shape instanceof HSLFTextShape) {// 文本框
+                        String text = ((HSLFTextShape) shape).getText();
+                        text = text.trim();
+                        if (StrUtil.isNotBlank(text)) {
+                            String transContent = transApi.translate(srcLang, desLang, text);
+                            ((HSLFTextShape) shape).setText(transContent);
+                            current++;
+                            if (percent != 100 * current/total) {
+                                percent = (int) (100 * current/total);
+                                if (percent >100) percent = 100;
+                                progressDAO.updateProgress(rowId, percent);
                             }
-                            else if (shape instanceof XSLFTextShape) {// 文本框
-                                String text = ((XSLFTextShape) shape).getText();
-                                if (StrUtil.isNotBlank(text)) {
-                                    String transContent = transApi.translate(srcLang, desLang, text);
-                                    ((HSLFTextShape) shape).setText(transContent);
-                                }
+                        }
+                    } else if (shape instanceof XSLFTextShape) {// 文本框
+                        String text = ((XSLFTextShape) shape).getText();
+                        text = text.trim();
+                        if (StrUtil.isNotBlank(text)) {
+                            String transContent = transApi.translate(srcLang, desLang, text);
+                            ((HSLFTextShape) shape).setText(transContent);
+                            current++;
+                            if (percent != 100 * current/total) {
+                                percent = (int) (100 * current/total);
+                                if (percent >100) percent = 100;
+                                progressDAO.updateProgress(rowId, percent);
                             }
-                            else if (shape instanceof HSLFTable) {// 表格
-                                int rowSize = ((HSLFTable) shape).getNumberOfRows();
-                                int columnSize = ((HSLFTable) shape).getNumberOfColumns();
-                                for (int rowNum = 0; rowNum < rowSize; rowNum++) {
-                                    for (int columnNum = 0; columnNum < columnSize; columnNum++) {
-                                        HSLFTableCell cell = ((HSLFTable) shape).getCell(rowNum, columnNum);
-                                        if (cell != null) {
-                                            String text = cell.getText();
-                                            if (StrUtil.isNotBlank(text)) {
-                                                String transContent = transApi.translate(srcLang, desLang, text);
-                                                ((HSLFTextShape) shape).setText(transContent);
-                                            }
+                        }
+                    } else if (shape instanceof HSLFTable) {// 表格
+                        int rowSize = ((HSLFTable) shape).getNumberOfRows();
+                        int columnSize = ((HSLFTable) shape).getNumberOfColumns();
+                        for (int rowNum = 0; rowNum < rowSize; rowNum++) {
+                            for (int columnNum = 0; columnNum < columnSize; columnNum++) {
+                                HSLFTableCell cell = ((HSLFTable) shape).getCell(rowNum, columnNum);
+                                if (cell != null) {
+                                    String text = cell.getText();
+                                    text = text.trim();
+                                    if (StrUtil.isNotBlank(text)) {
+                                        String transContent = transApi.translate(srcLang, desLang, text);
+                                        ((HSLFTextShape) shape).setText(transContent);
+                                        current++;
+                                        if (percent != 100 * current/total) {
+                                            percent = (int) (100 * current/total);
+                                            if (percent >100) percent = 100;
+                                            progressDAO.updateProgress(rowId, percent);
                                         }
                                     }
                                 }
                             }
-                            else if (shape instanceof XSLFTable) {// 表格
-                                int rowSize = ((XSLFTable) shape).getNumberOfRows();
-                                int columnSize = ((XSLFTable) shape).getNumberOfColumns();
-                                for (int rowNum = 0; rowNum < rowSize; rowNum++) {
-                                    for (int columnNum = 0; columnNum < columnSize; columnNum++) {
-                                        XSLFTableCell cell = ((XSLFTable) shape).getCell(rowNum, columnNum);
-                                        if (cell != null) {
-                                            String text = cell.getText();
-                                            if (StrUtil.isNotBlank(text)) {
-                                                String transContent = transApi.translate(srcLang, desLang, text);
-                                                ((HSLFTextShape) shape).setText(transContent);
-                                            }
+                        }
+                    } else if (shape instanceof XSLFTable) {// 表格
+                        int rowSize = ((XSLFTable) shape).getNumberOfRows();
+                        int columnSize = ((XSLFTable) shape).getNumberOfColumns();
+                        for (int rowNum = 0; rowNum < rowSize; rowNum++) {
+                            for (int columnNum = 0; columnNum < columnSize; columnNum++) {
+                                XSLFTableCell cell = ((XSLFTable) shape).getCell(rowNum, columnNum);
+                                if (cell != null) {
+                                    String text = cell.getText();
+                                    text = text.trim();
+                                    if (StrUtil.isNotBlank(text)) {
+                                        String transContent = transApi.translate(srcLang, desLang, text);
+                                        ((HSLFTextShape) shape).setText(transContent);
+                                        current++;
+                                        if (percent != 100 * current/total) {
+                                            percent = (int) (100 * current/total);
+                                            if (percent >100) percent = 100;
+                                            progressDAO.updateProgress(rowId, percent);
                                         }
                                     }
                                 }
@@ -179,24 +188,13 @@ public class TransPPtxImpl implements TransFile {
                         }
                     }
                 }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (slideShow != null) {
-                    FileOutputStream outStream;
-                    outStream = new FileOutputStream(desFile);
-                    slideShow.write(outStream);
-                    slideShow.close();
-                }
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
+        FileOutputStream outStream;
+        outStream = new FileOutputStream(desFile);
+        slideShow.write(outStream);
+        slideShow.close();
+        is.close();
+        return true;
     }
 }

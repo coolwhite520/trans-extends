@@ -16,11 +16,15 @@ public class TransExtController {
     @Autowired
     TransFactory transFactory;
 
-    @PostMapping("/trans_file")
+    @PostMapping("/trans_office")
     public BaseResponse translateFile(@RequestBody ReqBody reqBody) {
-        String fe = FilenameUtils.getExtension(reqBody.src_file);
-        transFactory.create(fe).translate(reqBody.row_id, reqBody.src_lang, reqBody.des_lang, reqBody.src_file, reqBody.des_file);
-        return BaseResponse.ok(reqBody);
+        try {
+            String fe = FilenameUtils.getExtension(reqBody.src_file);
+            transFactory.create(fe).translate(reqBody.row_id, reqBody.src_lang, reqBody.des_lang, reqBody.src_file, reqBody.des_file);
+            return BaseResponse.ok();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return BaseResponse.error(e.getMessage());
+        }
     }
-
 }

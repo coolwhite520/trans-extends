@@ -23,123 +23,117 @@ public class TransDocxImpl implements TransFile {
     @Autowired
     ProgressDAO progressDAO;
 
-    public long calculateTotalProgress(String srcFile) {
+    public long calculateTotalProgress(String srcFile) throws Exception {
         long total = 0;
         XWPFDocument document = null;
-        try {
-            document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
-            Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
-            while (itPara.hasNext()) {
-                XWPFParagraph paragraph = itPara.next();
-                for (XWPFRun run : paragraph.getRuns()) {
-                    String text = run.getText(0);
-                    if (StrUtil.isNotBlank(text)) {
-                        total ++;
-                    }
+        document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
+        Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
+        while (itPara.hasNext()) {
+            XWPFParagraph paragraph = itPara.next();
+            for (XWPFRun run : paragraph.getRuns()) {
+                String text = run.getText(0);
+                text = text.trim();
+                if (StrUtil.isNotBlank(text)) {
+                    total++;
                 }
-            }
-            Iterator<XWPFTable> itTable = document.getTablesIterator();
-            while (itTable.hasNext()) {
-                XWPFTable table = itTable.next();
-                int count = table.getNumberOfRows();
-                for (int i = 0; i < count; i++) {
-                    XWPFTableRow row = table.getRow(i);
-                    List<XWPFTableCell> cells = row.getTableCells();
-                    for (XWPFTableCell cell : cells) {
-                        String text = cell.getText();
-                        if (StrUtil.isNotBlank(text)) {
-                            List<XWPFParagraph> paragraphs = cell.getParagraphs();
-                            for (XWPFParagraph paragraph : paragraphs) {
-                                for (XWPFRun run : paragraph.getRuns()) {
-                                    String text2 = run.getText(0);
-                                    if (StrUtil.isNotBlank(text2)) {
-                                        total ++;
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (document != null) {
-                    document.close();
-                    return total;
-                }
-            }catch (Exception e) {
-
             }
         }
-        return 0;
+        Iterator<XWPFTable> itTable = document.getTablesIterator();
+        while (itTable.hasNext()) {
+            XWPFTable table = itTable.next();
+            int count = table.getNumberOfRows();
+            for (int i = 0; i < count; i++) {
+                XWPFTableRow row = table.getRow(i);
+                List<XWPFTableCell> cells = row.getTableCells();
+                for (XWPFTableCell cell : cells) {
+                    String text = cell.getText();
+                    if (StrUtil.isNotBlank(text)) {
+                        List<XWPFParagraph> paragraphs = cell.getParagraphs();
+                        for (XWPFParagraph paragraph : paragraphs) {
+                            for (XWPFRun run : paragraph.getRuns()) {
+                                String text2 = run.getText(0);
+                                text2 = text2.trim();
+                                if (StrUtil.isNotBlank(text2)) {
+                                    total++;
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        document.close();
+        return total;
+
     }
 
     @Override
-    public void translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) {
+    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+        long total = calculateTotalProgress(srcFile);
+        long current = 0;
+        int percent = 0;
         XWPFDocument document = null;
-        try {
-            document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
-            Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
-            while (itPara.hasNext()) {
-                XWPFParagraph paragraph = itPara.next();
-                for (XWPFRun run : paragraph.getRuns()) {
-                    String text = run.getText(0);
-                    if (StrUtil.isNotBlank(text)) {
-                        text = text.trim();
-                        String transContent = transApi.translate(srcLang, desLang, text);
-                        transContent += " ";
-                        run.setText(transContent,0);
-                        run.setText(transContent,0);
+        document = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
+        Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
+        while (itPara.hasNext()) {
+            XWPFParagraph paragraph = itPara.next();
+            for (XWPFRun run : paragraph.getRuns()) {
+                String text = run.getText(0);
+                text = text.trim();
+                if (StrUtil.isNotBlank(text)) {
+                    String transContent = transApi.translate(srcLang, desLang, text);
+                    transContent += " ";
+                    run.setText(transContent, 0);
+                    run.setText(transContent, 0);
+                    current++;
+                    if (percent != 100 * current/total) {
+                        percent = (int) (100 * current/total);
+                        if (percent >100) percent = 100;
+                        progressDAO.updateProgress(rowId, percent);
                     }
                 }
             }
-            Iterator<XWPFTable> itTable = document.getTablesIterator();
-            while (itTable.hasNext()) {
-                XWPFTable table = itTable.next();
-                int count = table.getNumberOfRows();
-                for (int i = 0; i < count; i++) {
-                    XWPFTableRow row = table.getRow(i);
-                    List<XWPFTableCell> cells = row.getTableCells();
-                    for (XWPFTableCell cell : cells) {
-                        String text = cell.getText();
-                        if (StrUtil.isNotBlank(text)) {
-                            List<XWPFParagraph> paragraphs = cell.getParagraphs();
-                            for (XWPFParagraph paragraph : paragraphs) {
-                                for (XWPFRun run : paragraph.getRuns()) {
-                                    String text2 = run.getText(0);
-                                    if (StrUtil.isNotBlank(text2)) {
-                                        text2 = text2.trim();
-                                        String transContent = transApi.translate(srcLang, desLang, text2);
-                                        transContent += " ";
-                                        run.setText(transContent,0);
-                                        run.setText(transContent,0);
+        }
+        Iterator<XWPFTable> itTable = document.getTablesIterator();
+        while (itTable.hasNext()) {
+            XWPFTable table = itTable.next();
+            int count = table.getNumberOfRows();
+            for (int i = 0; i < count; i++) {
+                XWPFTableRow row = table.getRow(i);
+                List<XWPFTableCell> cells = row.getTableCells();
+                for (XWPFTableCell cell : cells) {
+                    String text = cell.getText();
+                    if (StrUtil.isNotBlank(text)) {
+                        List<XWPFParagraph> paragraphs = cell.getParagraphs();
+                        for (XWPFParagraph paragraph : paragraphs) {
+                            for (XWPFRun run : paragraph.getRuns()) {
+                                String text2 = run.getText(0);
+                                text2 = text2.trim();
+                                if (StrUtil.isNotBlank(text2)) {
+                                    String transContent = transApi.translate(srcLang, desLang, text2);
+                                    transContent += " ";
+                                    run.setText(transContent, 0);
+                                    run.setText(transContent, 0);
+                                    current++;
+                                    if (percent != 100 * current/total) {
+                                        percent = (int) (100 * current/total);
+                                        if (percent >100) percent = 100;
+                                        progressDAO.updateProgress(rowId, percent);
                                     }
                                 }
                             }
-
                         }
+
                     }
                 }
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (document != null) {
-                    FileOutputStream outStream = null;
-                    outStream = new FileOutputStream(desFile);
-                    document.write(outStream);
-                    document.close();
-                    outStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
+        FileOutputStream outStream = null;
+        outStream = new FileOutputStream(desFile);
+        document.write(outStream);
+        document.close();
+        outStream.close();
+        return true;
     }
 }
