@@ -21,6 +21,9 @@ public class TransFactoryImpl implements TransFactory {
     @Autowired
     TransXlsxImpl transXlsx;
 
+    @Autowired
+    TransPDFImpl transPDF;
+
     @Override
     public TransFile create(String ext) {
         if (ext.equalsIgnoreCase("doc")) {
@@ -31,6 +34,8 @@ public class TransFactoryImpl implements TransFactory {
             return transPPtx;
         }  else if (ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("xls")) {
             return transXlsx;
+        } else if (ext.equalsIgnoreCase("pdf")) {
+            return transPDF;
         }
         return null;
     }

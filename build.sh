@@ -1,1 +1,1 @@
-docker build --network=host -t dpx:5.1.2 .
+docker build --network=host -t file:5.1.2 .

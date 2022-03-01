@@ -1,4 +1,5 @@
 package com.panda.transextends.mapper;
+
 import org.apache.ibatis.annotations.*;
 
 @Mapper

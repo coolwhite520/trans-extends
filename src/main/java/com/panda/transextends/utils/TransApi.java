@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.panda.transextends.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -20,7 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
+@Component
 public class TransApi {
     @Value("${core.host}")
     private String host;
