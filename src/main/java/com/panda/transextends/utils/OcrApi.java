@@ -41,7 +41,7 @@ public class OcrApi {
         }
     }
 
-    public String convert2ocrLang(String srcLang) {
+    private String convert2ocrLang(String srcLang) {
         for (Map.Entry<String, String> entry : entries) {
             if (srcLang.equals(entry.getKey())) return entry.getValue();
         }
