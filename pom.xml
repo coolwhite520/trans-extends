@@ -125,6 +125,13 @@
             <artifactId>hutool-all</artifactId>
             <version>5.6.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.panda.util</groupId>
+            <artifactId>com.panda.util</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/bee.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -140,6 +147,15 @@
     </dependencyManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>lib</directory>
+                <targetPath>BOOT-INF/lib/</targetPath>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

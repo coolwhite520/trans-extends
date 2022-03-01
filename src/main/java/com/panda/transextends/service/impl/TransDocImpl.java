@@ -67,9 +67,7 @@ public class TransDocImpl implements TransFile {
     @Override
     public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         boolean b = convertDoc2Docx(srcFile, srcFile + "x");
-        if (b) {
-            return transDocx.translate(rowId, srcLang, desLang, srcFile + "x", desFile);
-        }
+        if (b) return transDocx.translate(rowId, srcLang, desLang, srcFile + "x", desFile);
         return false;
     }
 }

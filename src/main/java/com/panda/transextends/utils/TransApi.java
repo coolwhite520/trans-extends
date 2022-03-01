@@ -36,7 +36,6 @@ public class TransApi {
     }
 
     public String translate(String srcLang, String desLang, String content) {
-        if(true) return "abc";
         try {
             String keyStr = String.format("src_lang=%s&des_lang=%s&content=%s", srcLang, desLang, content);
             String key = hmacSHA1Encrypt(keyStr);

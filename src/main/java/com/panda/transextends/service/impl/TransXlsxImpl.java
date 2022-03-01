@@ -51,7 +51,6 @@ public class TransXlsxImpl implements TransFile {
                     CellType cellType = cell.getCellType();
                     if (cellType == CellType.STRING) {
                         String text = cell.getStringCellValue();
-                        text = text.trim();
                         if (StrUtil.isNotBlank(text)) {
                             total++;
                         }
@@ -92,7 +91,6 @@ public class TransXlsxImpl implements TransFile {
                     CellType cellType = cell.getCellType();
                     if (cellType == CellType.STRING) {
                         String text = cell.getStringCellValue();
-                        text = text.trim();
                         if (StrUtil.isNotBlank(text)) {
                             String transContent = transApi.translate(srcLang, desLang, text);
                             cell.setCellValue(transContent);

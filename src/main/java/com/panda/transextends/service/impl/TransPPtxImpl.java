@@ -46,13 +46,11 @@ public class TransPPtxImpl implements TransFile {
                     Shape shape = (Shape) shapes.get(i);
                     if (shape instanceof HSLFTextShape) {// 文本框
                         String text = ((HSLFTextShape) shape).getText();
-                        text = text.trim();
                         if (StrUtil.isNotBlank(text)) {
                             total++;
                         }
                     } else if (shape instanceof XSLFTextShape) {// 文本框
                         String text = ((XSLFTextShape) shape).getText();
-                        text = text.trim();
                         if (StrUtil.isNotBlank(text)) {
                             total++;
                         }
@@ -64,7 +62,6 @@ public class TransPPtxImpl implements TransFile {
                                 HSLFTableCell cell = ((HSLFTable) shape).getCell(rowNum, columnNum);
                                 if (cell != null) {
                                     String text = cell.getText();
-                                    text = text.trim();
                                     if (StrUtil.isNotBlank(text)) {
                                         total++;
                                     }
@@ -79,7 +76,6 @@ public class TransPPtxImpl implements TransFile {
                                 XSLFTableCell cell = ((XSLFTable) shape).getCell(rowNum, columnNum);
                                 if (cell != null) {
                                     String text = cell.getText();
-                                    text = text.trim();
                                     if (StrUtil.isNotBlank(text)) {
                                         total++;
                                     }
@@ -118,7 +114,6 @@ public class TransPPtxImpl implements TransFile {
                     Shape shape = (Shape) shapes.get(i);
                     if (shape instanceof HSLFTextShape) {// 文本框
                         String text = ((HSLFTextShape) shape).getText();
-                        text = text.trim();
                         if (StrUtil.isNotBlank(text)) {
                             String transContent = transApi.translate(srcLang, desLang, text);
                             ((HSLFTextShape) shape).setText(transContent);
@@ -131,7 +126,6 @@ public class TransPPtxImpl implements TransFile {
                         }
                     } else if (shape instanceof XSLFTextShape) {// 文本框
                         String text = ((XSLFTextShape) shape).getText();
-                        text = text.trim();
                         if (StrUtil.isNotBlank(text)) {
                             String transContent = transApi.translate(srcLang, desLang, text);
                             ((HSLFTextShape) shape).setText(transContent);
@@ -150,7 +144,6 @@ public class TransPPtxImpl implements TransFile {
                                 HSLFTableCell cell = ((HSLFTable) shape).getCell(rowNum, columnNum);
                                 if (cell != null) {
                                     String text = cell.getText();
-                                    text = text.trim();
                                     if (StrUtil.isNotBlank(text)) {
                                         String transContent = transApi.translate(srcLang, desLang, text);
                                         ((HSLFTextShape) shape).setText(transContent);
@@ -172,7 +165,6 @@ public class TransPPtxImpl implements TransFile {
                                 XSLFTableCell cell = ((XSLFTable) shape).getCell(rowNum, columnNum);
                                 if (cell != null) {
                                     String text = cell.getText();
-                                    text = text.trim();
                                     if (StrUtil.isNotBlank(text)) {
                                         String transContent = transApi.translate(srcLang, desLang, text);
                                         ((HSLFTextShape) shape).setText(transContent);

@@ -32,7 +32,6 @@ public class TransDocxImpl implements TransFile {
             XWPFParagraph paragraph = itPara.next();
             for (XWPFRun run : paragraph.getRuns()) {
                 String text = run.getText(0);
-                text = text.trim();
                 if (StrUtil.isNotBlank(text)) {
                     total++;
                 }
@@ -52,7 +51,6 @@ public class TransDocxImpl implements TransFile {
                         for (XWPFParagraph paragraph : paragraphs) {
                             for (XWPFRun run : paragraph.getRuns()) {
                                 String text2 = run.getText(0);
-                                text2 = text2.trim();
                                 if (StrUtil.isNotBlank(text2)) {
                                     total++;
                                 }
@@ -80,7 +78,6 @@ public class TransDocxImpl implements TransFile {
             XWPFParagraph paragraph = itPara.next();
             for (XWPFRun run : paragraph.getRuns()) {
                 String text = run.getText(0);
-                text = text.trim();
                 if (StrUtil.isNotBlank(text)) {
                     String transContent = transApi.translate(srcLang, desLang, text);
                     transContent += " ";
@@ -109,7 +106,6 @@ public class TransDocxImpl implements TransFile {
                         for (XWPFParagraph paragraph : paragraphs) {
                             for (XWPFRun run : paragraph.getRuns()) {
                                 String text2 = run.getText(0);
-                                text2 = text2.trim();
                                 if (StrUtil.isNotBlank(text2)) {
                                     String transContent = transApi.translate(srcLang, desLang, text2);
                                     transContent += " ";
