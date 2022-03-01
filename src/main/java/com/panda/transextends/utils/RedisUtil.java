@@ -22,7 +22,7 @@ public class RedisUtil {
         } catch (Exception e) {
             return "0";
         } finally {
-            jedis.close();
+            if(jedis != null) jedis.close();
         }
     }
 
@@ -38,7 +38,7 @@ public class RedisUtil {
         } catch (Exception e) {
             return "0";
         } finally {
-            jedis.close();
+            if(jedis != null) jedis.close();
         }
         return value;
     }
@@ -54,7 +54,7 @@ public class RedisUtil {
         } catch (Exception e) {
             return false;
         } finally {
-            jedis.close();
+            if(jedis != null) jedis.close();
         }
     }
 
@@ -69,7 +69,7 @@ public class RedisUtil {
         } catch (Exception e) {
             return 0L;
         } finally {
-            jedis.close();
+            if(jedis != null) jedis.close();
         }
     }
 
@@ -92,7 +92,7 @@ public class RedisUtil {
         } catch (Exception e) {
             return null;
         } finally {
-            jedis.close();
+            if(jedis != null) jedis.close();
         }
     }
 

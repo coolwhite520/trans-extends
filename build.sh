@@ -1,1 +1,1 @@
-docker build -t springio/gs-spring-boot-docker .
+docker build --network=host -t dpx:5.1.2 .
