@@ -1,5 +1,6 @@
 package com.panda.transextends.utils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.panda.transextends.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
-public class TransApi {
+public class CoreApi {
     @Value("${core.host}")
     private String host;
 
@@ -41,7 +39,51 @@ public class TransApi {
         byte[] text = encryptText.getBytes("UTF-8");
         return Base64.getEncoder().encodeToString(mac.doFinal(text));
     }
+    public ArrayList<List<String>> tokenize(String srcLang, String content) {
+        try {
+            String reqUrl = String.format("http://%s:%s/tokenize", host, port);
+            URL url = new URL(reqUrl);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            Map map = new HashMap<>();
+            map.put("src_lang", srcLang);
+            map.put("content", content);
+            try (OutputStream os = con.getOutputStream()) {
+                byte[] bytes = JSONObject.toJSONBytes(map);
+                os.write(bytes, 0, bytes.length);
+            }
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                con.disconnect();
+                JSONObject jsonObject = JSONObject.parseObject(response.toString());
+                int code = jsonObject.getIntValue("code");
+                if (code == 200) {
+                    JSONArray objects = jsonObject.getJSONArray("list");
+                    ArrayList<List<String>> lists = new ArrayList<>();
+                    List<String> keysList = new ArrayList<String>(10);
+                    for (int i = 0; i < objects.size(); i++) {
+                        JSONArray jsonArray = objects.getJSONArray(i);
+                        List<String> strings = jsonArray.toJavaList(String.class);
+                        lists.add(strings);
+                    }
+                    return lists;
+                }
+                return null;
+            }
 
+        } catch (Exception e) {
+            System.out.println("请求异常");
+            throw new RuntimeException(e);
+        }
+    }
     public String translate(String srcLang, String desLang, String content) {
         try {
             String keyStr = String.format("src_lang=%s&des_lang=%s&content=%s", srcLang, desLang, content);

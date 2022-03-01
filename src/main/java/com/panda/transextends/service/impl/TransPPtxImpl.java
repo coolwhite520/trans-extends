@@ -3,7 +3,7 @@ package com.panda.transextends.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.service.TransFile;
-import com.panda.transextends.utils.TransApi;
+import com.panda.transextends.utils.CoreApi;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTable;
@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 public class TransPPtxImpl implements TransFile {
     @Autowired
-    TransApi transApi;
+    CoreApi coreApi;
 
     @Autowired
     RecordDAO recordDAO;
@@ -115,7 +115,7 @@ public class TransPPtxImpl implements TransFile {
                     if (shape instanceof HSLFTextShape) {// 文本框
                         String text = ((HSLFTextShape) shape).getText();
                         if (StrUtil.isNotBlank(text)) {
-                            String transContent = transApi.translate(srcLang, desLang, text);
+                            String transContent = coreApi.translate(srcLang, desLang, text);
                             ((HSLFTextShape) shape).setText(transContent);
                             current++;
                             if (percent != 100 * current/total) {
@@ -127,7 +127,7 @@ public class TransPPtxImpl implements TransFile {
                     } else if (shape instanceof XSLFTextShape) {// 文本框
                         String text = ((XSLFTextShape) shape).getText();
                         if (StrUtil.isNotBlank(text)) {
-                            String transContent = transApi.translate(srcLang, desLang, text);
+                            String transContent = coreApi.translate(srcLang, desLang, text);
                             ((HSLFTextShape) shape).setText(transContent);
                             current++;
                             if (percent != 100 * current/total) {
@@ -145,7 +145,7 @@ public class TransPPtxImpl implements TransFile {
                                 if (cell != null) {
                                     String text = cell.getText();
                                     if (StrUtil.isNotBlank(text)) {
-                                        String transContent = transApi.translate(srcLang, desLang, text);
+                                        String transContent = coreApi.translate(srcLang, desLang, text);
                                         ((HSLFTextShape) shape).setText(transContent);
                                         current++;
                                         if (percent != 100 * current/total) {
@@ -166,7 +166,7 @@ public class TransPPtxImpl implements TransFile {
                                 if (cell != null) {
                                     String text = cell.getText();
                                     if (StrUtil.isNotBlank(text)) {
-                                        String transContent = transApi.translate(srcLang, desLang, text);
+                                        String transContent = coreApi.translate(srcLang, desLang, text);
                                         ((HSLFTextShape) shape).setText(transContent);
                                         current++;
                                         if (percent != 100 * current/total) {

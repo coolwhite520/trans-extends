@@ -3,7 +3,7 @@ package com.panda.transextends.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.service.TransFile;
-import com.panda.transextends.utils.TransApi;
+import com.panda.transextends.utils.CoreApi;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.List;
 public class TransDocxImpl implements TransFile {
 
     @Autowired
-    TransApi transApi;
+    CoreApi coreApi;
 
     @Autowired
     RecordDAO recordDAO;
@@ -78,7 +78,7 @@ public class TransDocxImpl implements TransFile {
             for (XWPFRun run : paragraph.getRuns()) {
                 String text = run.getText(0);
                 if (StrUtil.isNotBlank(text)) {
-                    String transContent = transApi.translate(srcLang, desLang, text);
+                    String transContent = coreApi.translate(srcLang, desLang, text);
                     transContent += " ";
                     run.setText(transContent, 0);
                     run.setText(transContent, 0);
@@ -106,7 +106,7 @@ public class TransDocxImpl implements TransFile {
                             for (XWPFRun run : paragraph.getRuns()) {
                                 String text2 = run.getText(0);
                                 if (StrUtil.isNotBlank(text2)) {
-                                    String transContent = transApi.translate(srcLang, desLang, text2);
+                                    String transContent = coreApi.translate(srcLang, desLang, text2);
                                     transContent += " ";
                                     run.setText(transContent, 0);
                                     run.setText(transContent, 0);

@@ -3,7 +3,7 @@ package com.panda.transextends.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.service.TransFile;
-import com.panda.transextends.utils.TransApi;
+import com.panda.transextends.utils.CoreApi;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -17,7 +17,7 @@ import java.io.FileOutputStream;
 @Service
 public class TransXlsxImpl implements TransFile {
     @Autowired
-    TransApi transApi;
+    CoreApi coreApi;
 
     @Autowired
     RecordDAO recordDAO;
@@ -86,7 +86,7 @@ public class TransXlsxImpl implements TransFile {
                     if (cellType == CellType.STRING) {
                         String text = cell.getStringCellValue();
                         if (StrUtil.isNotBlank(text)) {
-                            String transContent = transApi.translate(srcLang, desLang, text);
+                            String transContent = coreApi.translate(srcLang, desLang, text);
                             cell.setCellValue(transContent);
                             current++;
                             if (percent != 100 * current/total) {
