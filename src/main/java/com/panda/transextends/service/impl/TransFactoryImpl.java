@@ -28,7 +28,10 @@ public class TransFactoryImpl implements TransFactory {
     TransEmailImpl transEmail;
 
     @Autowired
-    TransImagesImpl transImages;
+    TransImagesImpl transImages; // 直接返回文本内容
+
+    @Autowired
+    TransImg2Impl transImg2; // 先转为可编辑的pdf -> docx
 
     @Autowired
     TransTikaImpl transTika;

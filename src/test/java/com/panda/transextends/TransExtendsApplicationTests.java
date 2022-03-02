@@ -1,6 +1,7 @@
 package com.panda.transextends;
 
 import com.panda.transextends.pojo.OcrEntity;
+import com.panda.transextends.service.impl.TransDocxImpl;
 import com.panda.transextends.service.impl.TransImagesImpl;
 import com.panda.transextends.service.impl.TransTikaImpl;
 import com.panda.transextends.utils.CoreApi;
@@ -31,6 +32,14 @@ class TransExtendsApplicationTests {
 
     @Autowired
     OcrApi ocrApi;
+
+    @Autowired
+    TransDocxImpl transDocx;
+
+    @Test
+    void removeAllPics() throws IOException {
+        transDocx.removeAllPictures("/Users/baiyang/Desktop/翻译资源/pdf/bbbx.pdf.ocr.docx");
+    }
 
     @Test
     void contextLoads() throws Exception {

@@ -1,5 +1,6 @@
 package com.panda.transextends.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.service.TransFile;
 import com.panda.transextends.utils.OcrApi;
 import com.panda.transextends.utils.PluginsApi;
@@ -32,7 +33,7 @@ public class TransPDFImpl implements TransFile {
             PDFTextStripper pdfStripper = new PDFTextStripper();
             String text = pdfStripper.getText(document);
             System.out.println(text);
-            if (text.length() > 0) return true;
+            if (StrUtil.isNotBlank(text) && text.trim().length() > 0) return true;
             document.close();
             return false;
         } catch (Exception e) {
@@ -50,15 +51,28 @@ public class TransPDFImpl implements TransFile {
                 return false;
             }
             srcFile = outputFile;
-        }
-//        转化为docx
-        boolean p2dx = pluginsApi.convert(srcFile, "p2dx");
-        if (p2dx) {
-            String path = FilenameUtils.getFullPathNoEndSeparator(srcFile);
-            String baseName = FilenameUtils.getBaseName(srcFile);
-            String srcConFile = String.format("%s/%s.docx", path, baseName);
-//            翻译docx文档
-            return transDocx.translate(rowId, srcLang, desLang, srcConFile, desFile);
+            // 转化为docx
+            boolean p2dx = pluginsApi.convert(srcFile, "p2dx");
+            if (p2dx) {
+                String path = FilenameUtils.getFullPathNoEndSeparator(srcFile);
+                String baseName = FilenameUtils.getBaseName(srcFile);
+                String srcConFile = String.format("%s/%s.docx", path, baseName);
+//                移除所有图片
+                transDocx.removeAllPictures(srcConFile);
+                //翻译docx文档
+                return transDocx.translate(rowId, srcLang, desLang, srcConFile, desFile);
+            }
+
+        } else {
+            // 转化为docx
+            boolean p2dx = pluginsApi.convert(srcFile, "p2dx");
+            if (p2dx) {
+                String path = FilenameUtils.getFullPathNoEndSeparator(srcFile);
+                String baseName = FilenameUtils.getBaseName(srcFile);
+                String srcConFile = String.format("%s/%s.docx", path, baseName);
+              //翻译docx文档
+                return transDocx.translate(rowId, srcLang, desLang, srcConFile, desFile);
+            }
         }
         return false;
     }
