@@ -32,7 +32,6 @@ public class TransExtController {
                 return BaseResponse.error(format);
             }
             int transType = recordDAO.queryTransTypeByRowId(reqBody.getRowId());
-            transType = 1;
             String fe = FilenameUtils.getExtension(reqBody.getSrcFile());
             boolean success = transFactory.create(transType, fe).translate(reqBody.getRowId(),
                     reqBody.getSrcLang(),
