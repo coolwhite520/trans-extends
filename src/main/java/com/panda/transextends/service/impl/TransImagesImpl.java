@@ -9,6 +9,7 @@ import com.panda.transextends.utils.OcrApi;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,6 @@ public class TransImagesImpl implements TransFile {
         long current = 0;
         int percent = 0;
         XWPFDocument xwpfDocument = new XWPFDocument();
-
         for (OcrEntity ocrEntity : list) {
             String s = ocrEntity.getContent();
             XWPFParagraph paragraph = xwpfDocument.createParagraph();
