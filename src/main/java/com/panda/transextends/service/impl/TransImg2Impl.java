@@ -38,7 +38,6 @@ public class TransImg2Impl implements TransFile {
             //翻译docx文档
             return transDocx.translate(rowId, srcLang, desLang, srcConFile, desFile);
         }
-
         return false;
     }
 }

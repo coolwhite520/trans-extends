@@ -40,8 +40,8 @@ public class CoreApi {
         return Base64.getEncoder().encodeToString(mac.doFinal(text));
     }
     public ArrayList<List<String>> tokenize(String srcLang, String content) {
+        String reqUrl = String.format("http://%s:%s/tokenize", host, port);
         try {
-            String reqUrl = String.format("http://%s:%s/tokenize", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -76,22 +76,24 @@ public class CoreApi {
                     }
                     return lists;
                 }
-                return null;
+                String msg = jsonObject.getString("msg");
+                String error = String.format("Child请求异常：URL->%s, ERR->%s", reqUrl, msg);
+                throw new RuntimeException(error);
             }
 
         } catch (Exception e) {
-            System.out.println("请求异常");
-            throw new RuntimeException(e);
+            String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            throw new RuntimeException(error);
         }
     }
     public String translate(String srcLang, String desLang, String content) {
+        String reqUrl = String.format("http://%s:%s/translate", host, port);
         try {
             String keyStr = String.format("src_lang=%s&des_lang=%s&content=%s", srcLang, desLang, content);
             String key = hmacSHA1Encrypt(keyStr);
             if(redisUtil.exists(key)) {
                 return redisUtil.get(key);
             }
-            String reqUrl = String.format("http://%s:%s/translate", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -127,12 +129,14 @@ public class CoreApi {
                     redisUtil.set(key, data);
                     return data;
                 }
-                return "";
+                String msg = jsonObject.getString("msg");
+                String error = String.format("Child请求异常：URL->%s, ERR->%s", reqUrl, msg);
+                throw new RuntimeException(error);
             }
 
         } catch (Exception e) {
-            System.out.println("请求异常");
-            throw new RuntimeException(e);
+            String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            throw new RuntimeException(error);
         }
     }
 }

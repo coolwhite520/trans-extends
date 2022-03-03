@@ -49,8 +49,8 @@ public class OcrApi {
     }
 
     public String ocrmypdf(String srcLang, String srcFile) {
+        String reqUrl = String.format("http://%s:%s/ocrmypdf", host, port);
         try {
-            String reqUrl = String.format("http://%s:%s/ocrmypdf", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -77,18 +77,20 @@ public class OcrApi {
                 if (code == 200) {
                     return jsonObject.getString("data");
                 }
-                return "";
+                String msg = jsonObject.getString("msg");
+                String error = String.format("Child请求异常：URL->%s, ERR->%s", reqUrl, msg);
+                throw new RuntimeException(error);
             }
 
         } catch (Exception e) {
-            System.out.println("请求异常");
-            throw new RuntimeException(e);
+            String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            throw new RuntimeException(error);
         }
     }
 
     public String ocrmyimg(String srcLang, String srcFile) {
+        String reqUrl = String.format("http://%s:%s/ocrmyimg", host, port);
         try {
-            String reqUrl = String.format("http://%s:%s/ocrmyimg", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -115,18 +117,20 @@ public class OcrApi {
                 if (code == 200) {
                     return jsonObject.getString("data");
                 }
-                return "";
+                String msg = jsonObject.getString("msg");
+                String error = String.format("Child请求异常：URL->%s, ERR->%s", reqUrl, msg);
+                throw new RuntimeException(error);
             }
 
         } catch (Exception e) {
-            System.out.println("请求异常");
-            throw new RuntimeException(e);
+            String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            throw new RuntimeException(error);
         }
     }
 
     public List<OcrEntity> extract(String srcLang, String srcFile) {
+        String reqUrl = String.format("http://%s:%s/extract", host, port);
         try {
-            String reqUrl = String.format("http://%s:%s/extract", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -155,12 +159,14 @@ public class OcrApi {
                     List<OcrEntity> ocrEntities = data.toJavaList(OcrEntity.class);
                     return ocrEntities;
                 }
-                return null;
+                String msg = jsonObject.getString("msg");
+                String error = String.format("Child请求异常：URL->%s, ERR->%s", reqUrl, msg);
+                throw new RuntimeException(error);
             }
 
         } catch (Exception e) {
-            System.out.println("请求异常");
-            throw new RuntimeException(e);
+            String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            throw new RuntimeException(error);
         }
     }
 }

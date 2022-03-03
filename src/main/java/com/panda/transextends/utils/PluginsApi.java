@@ -23,8 +23,8 @@ public class PluginsApi {
     private int port;
 
     public boolean convert(String srcFile, String convertType) {
+        String reqUrl = String.format("http://%s:%s/convert_file", host, port);
         try {
-            String reqUrl = String.format("http://%s:%s/convert_file", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -51,18 +51,20 @@ public class PluginsApi {
                 if (code == 200) {
                     return true;
                 }
-                return false;
+                String msg = jsonObject.getString("msg");
+                String error = String.format("Child请求异常：URL->%s, ERR->%s", reqUrl, msg);
+                throw new RuntimeException(error);
             }
 
         } catch (Exception e) {
-            System.out.println("请求异常");
-            throw new RuntimeException(e);
+            String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            throw new RuntimeException(error);
         }
     }
 
     public boolean translate_email(int rowId, String srcLang, String desLang, String srcFile, String desFile) {
+        String reqUrl = String.format("http://%s:%s/trans_file", host, port);
         try {
-            String reqUrl = String.format("http://%s:%s/trans_file", host, port);
             URL url = new URL(reqUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -92,12 +94,14 @@ public class PluginsApi {
                 if (code == 200) {
                     return true;
                 }
-                return false;
+                String msg = jsonObject.getString("msg");
+                String error = String.format("Child请求异常：URL->%s, ERR->%s", reqUrl, msg);
+                throw new RuntimeException(error);
             }
 
         } catch (Exception e) {
-            System.out.println("请求异常");
-            throw new RuntimeException(e);
+            String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            throw new RuntimeException(error);
         }
     }
 }

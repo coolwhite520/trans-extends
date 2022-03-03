@@ -58,6 +58,6 @@ public class TransImagesImpl implements TransFile {
         xwpfDocument.write(outStream);
         xwpfDocument.close();
         outStream.close();
-        return false;
+        return true;
     }
 }
