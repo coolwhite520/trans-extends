@@ -10,6 +10,11 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.tika.Tika;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +39,15 @@ public class TransTikaImpl implements TransFile {
         FileInputStream fileInputStream = new FileInputStream(file);
         Tika tika = new Tika();
         String content = tika.parseToString(fileInputStream);
+
+//        BodyContentHandler textHandler = new BodyContentHandler();
+//        Parser parser= new AutoDetectParser();//当调用parser，AutoDetectParser会自动估计文档MIME类型，此处输入pdf文件，因此可以使用PDFParser
+//        ParseContext context= new ParseContext();
+//        Metadata matadata = new Metadata();//Metadata对象保存了作者，标题等元数据
+//        parser.parse(fileInputStream, textHandler, matadata, context);//执行解析过程
+//        System.out.println("Body: "+ textHandler.toString());//从textHandler打印正文
+
+
         ArrayList<List<String>> list = coreApi.tokenize(srcLang, content);
         long total = list.size();
         long current = 0;
