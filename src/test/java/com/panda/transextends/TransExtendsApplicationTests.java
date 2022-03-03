@@ -60,7 +60,7 @@ class TransExtendsApplicationTests {
 
     @Test
     void removeAllPics() throws IOException {
-        transDocx.removeAllPictures("/Users/baiyang/Desktop/翻译资源/pdf/bbbx.pdf.ocr.docx");
+        transDocx.removeAllPictures("/Users/baiyang/Desktop/a.docx");
     }
 
     @Test
