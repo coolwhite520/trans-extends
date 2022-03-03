@@ -7,6 +7,8 @@ import com.panda.transextends.service.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.xwpf.usermodel.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +67,8 @@ public class TransDocxImpl implements TransFile {
         return pictureFile.delete();
     }
 
-    public void removeAllPictures(String srcFile) throws IOException {
+    public String removeAllPictures(String srcFile) throws IOException {
+
         int imgNum = 0;
         XWPFDocument docx = new XWPFDocument(POIXMLDocument.openPackage(srcFile));
         //获取到该文档的所有段落集
@@ -75,6 +78,8 @@ public class TransDocxImpl implements TransFile {
         for (XWPFParagraph para : paras) {
             //段落中所有XWPFRun
             List<XWPFRun> runList = para.getRuns();
+            int fontSize = 0;
+            int count = 0;
             for (int i = 0; i < runList.size(); i++) {
                 XWPFRun run = runList.get(i);
                 //判断该段落是否是图片
@@ -88,17 +93,24 @@ public class TransDocxImpl implements TransFile {
                         deletePicture(pictureName);
                     }
                 } else {
-                    run.setFontSize(5);
+                    int size = run.getFontSizeAsDouble().intValue();
+                    fontSize += size;
+                    count++;
+                    System.out.println(size);
                 }
             }
+            fontSize = fontSize / count;
+            for (XWPFRun xwpfRun : runList) {
+                xwpfRun.setFontSize(fontSize);
+            }
         }
-        File pictureFile = new File(srcFile);
-        pictureFile.delete();
+        String strOutputFile = srcFile + ".rm-pic.docx";
         FileOutputStream outStream = null;
-        outStream = new FileOutputStream(srcFile);
+        outStream = new FileOutputStream(strOutputFile);
         docx.write(outStream);
         docx.close();
         outStream.close();
+        return strOutputFile;
     }
 
     public long calculateTotalProgress(String srcFile) throws Exception {

@@ -34,9 +34,9 @@ public class TransImg2Impl implements TransFile {
             String baseName = FilenameUtils.getBaseName(srcFile);
             String srcConFile = String.format("%s/%s.docx", path, baseName);
 //                移除所有图片
-            transDocx.removeAllPictures(srcConFile);
+            String rmPicFileName = transDocx.removeAllPictures(srcConFile);
             //翻译docx文档
-            return transDocx.translate(rowId, srcLang, desLang, srcConFile, desFile);
+            return transDocx.translate(rowId, srcLang, desLang, rmPicFileName, desFile);
         }
         return false;
     }
