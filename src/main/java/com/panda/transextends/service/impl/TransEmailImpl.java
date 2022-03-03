@@ -1,5 +1,6 @@
 package com.panda.transextends.service.impl;
 
+import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.service.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import com.panda.transextends.utils.PluginsApi;
@@ -33,6 +34,9 @@ public class TransEmailImpl implements TransFile {
     @Autowired
     CoreApi coreApi;
 
+    @Autowired
+    RecordDAO recordDAO;
+
     //            //邮件唯一id
 //            String messageId = parser.getMimeMessage().getMessageID();
 //            System.out.println(messageId);
@@ -63,7 +67,6 @@ public class TransEmailImpl implements TransFile {
         MimeMessage msg = new MimeMessage(session, inputStream);
         MimeMessageParser parser = new MimeMessageParser(msg).parse();
         String html = parser.getHtmlContent();
-        List<DataSource> dataSources = parser.getAttachmentList();
         //获取不到html内容时，则获取非html文本内容
         if (html == null || html.length() == 0) {
             String plain = parser.getPlainContent();
@@ -92,6 +95,9 @@ public class TransEmailImpl implements TransFile {
 
     @Override
     public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+        long total = calculateTotalProgress(srcLang, srcFile);
+        long current = 0;
+        int percent = 0;
         InputStream inputStream = new FileInputStream(srcFile);
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
@@ -109,6 +115,12 @@ public class TransEmailImpl implements TransFile {
                 for (String s : strings) {
                     String transContent = coreApi.translate(srcLang, desLang, s);
                     stringBuilder.append(transContent);
+                    current++;
+                    if (percent != 100 * current / total) {
+                        percent = (int) (100 * current / total);
+                        if (percent > 100) percent = 100;
+                        recordDAO.updateProgress(rowId, percent);
+                    }
                 }
             }
             msg.setContent(stringBuilder.toString(), "text/plain");
@@ -123,6 +135,12 @@ public class TransEmailImpl implements TransFile {
                         String text = ((TextNode) child).text();
                         text = coreApi.translate(srcLang, desLang, text);
                         ((TextNode) child).text(text); //replace to word
+                        current++;
+                        if (percent != 100 * current / total) {
+                            percent = (int) (100 * current / total);
+                            if (percent > 100) percent = 100;
+                            recordDAO.updateProgress(rowId, percent);
+                        }
                     }
                 }
             }

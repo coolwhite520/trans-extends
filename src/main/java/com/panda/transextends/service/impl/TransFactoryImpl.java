@@ -57,7 +57,7 @@ public class TransFactoryImpl implements TransFactory {
                 // 内部调用plugins的convert，然后调用transDocx进行翻译处理
                 return transPDF;
             } else if (ext.equalsIgnoreCase("eml")) {
-                // 直接调用plugins进行翻译处理
+                // 不调用plugins进行翻译处理了，python的那个处理有问题，没有java自己的库解析好
                 return transEmail;
             } else {//其他类型的文件让tika解析
                 return transTika;
