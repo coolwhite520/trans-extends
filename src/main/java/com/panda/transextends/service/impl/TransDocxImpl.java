@@ -99,9 +99,11 @@ public class TransDocxImpl implements TransFile {
                     System.out.println(size);
                 }
             }
-            fontSize = fontSize / count;
-            for (XWPFRun xwpfRun : runList) {
-                xwpfRun.setFontSize(fontSize);
+            if (count != 0) {
+                fontSize = fontSize / count;
+                for (XWPFRun xwpfRun : runList) {
+                    xwpfRun.setFontSize(fontSize);
+                }
             }
         }
         String strOutputFile = srcFile + ".rm-pic.docx";
