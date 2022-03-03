@@ -42,8 +42,7 @@ public class TransPPtxImpl implements TransFile {
         for (Slide slide : (List<Slide>) slideShow.getSlides()) {
             List shapes = slide.getShapes();
             if (shapes != null) {
-                for (int i = 0; i < shapes.size(); i++) {
-                    Shape shape = (Shape) shapes.get(i);
+                for (Object shape : shapes) {
                     if (shape instanceof HSLFTextShape) {// 文本框
                         String text = ((HSLFTextShape) shape).getText();
                         if (StrUtil.isNotBlank(text)) {
@@ -110,17 +109,16 @@ public class TransPPtxImpl implements TransFile {
         for (Slide slide : (List<Slide>) slideShow.getSlides()) {
             List shapes = slide.getShapes();
             if (shapes != null) {
-                for (int i = 0; i < shapes.size(); i++) {
-                    Shape shape = (Shape) shapes.get(i);
+                for (Object shape : shapes) {
                     if (shape instanceof HSLFTextShape) {// 文本框
                         String text = ((HSLFTextShape) shape).getText();
                         if (StrUtil.isNotBlank(text)) {
                             String transContent = coreApi.translate(srcLang, desLang, text);
                             ((HSLFTextShape) shape).setText(transContent);
                             current++;
-                            if (percent != 100 * current/total) {
-                                percent = (int) (100 * current/total);
-                                if (percent >100) percent = 100;
+                            if (percent != 100 * current / total) {
+                                percent = (int) (100 * current / total);
+                                if (percent > 100) percent = 100;
                                 recordDAO.updateProgress(rowId, percent);
                             }
                         }
@@ -128,11 +126,11 @@ public class TransPPtxImpl implements TransFile {
                         String text = ((XSLFTextShape) shape).getText();
                         if (StrUtil.isNotBlank(text)) {
                             String transContent = coreApi.translate(srcLang, desLang, text);
-                            ((HSLFTextShape) shape).setText(transContent);
+                            ((XSLFTextShape) shape).setText(transContent);
                             current++;
-                            if (percent != 100 * current/total) {
-                                percent = (int) (100 * current/total);
-                                if (percent >100) percent = 100;
+                            if (percent != 100 * current / total) {
+                                percent = (int) (100 * current / total);
+                                if (percent > 100) percent = 100;
                                 recordDAO.updateProgress(rowId, percent);
                             }
                         }
@@ -146,11 +144,11 @@ public class TransPPtxImpl implements TransFile {
                                     String text = cell.getText();
                                     if (StrUtil.isNotBlank(text)) {
                                         String transContent = coreApi.translate(srcLang, desLang, text);
-                                        ((HSLFTextShape) shape).setText(transContent);
+                                        cell.setText(transContent);
                                         current++;
-                                        if (percent != 100 * current/total) {
-                                            percent = (int) (100 * current/total);
-                                            if (percent >100) percent = 100;
+                                        if (percent != 100 * current / total) {
+                                            percent = (int) (100 * current / total);
+                                            if (percent > 100) percent = 100;
                                             recordDAO.updateProgress(rowId, percent);
                                         }
                                     }
@@ -167,11 +165,11 @@ public class TransPPtxImpl implements TransFile {
                                     String text = cell.getText();
                                     if (StrUtil.isNotBlank(text)) {
                                         String transContent = coreApi.translate(srcLang, desLang, text);
-                                        ((HSLFTextShape) shape).setText(transContent);
+                                        cell.setText(transContent);
                                         current++;
-                                        if (percent != 100 * current/total) {
-                                            percent = (int) (100 * current/total);
-                                            if (percent >100) percent = 100;
+                                        if (percent != 100 * current / total) {
+                                            percent = (int) (100 * current / total);
+                                            if (percent > 100) percent = 100;
                                             recordDAO.updateProgress(rowId, percent);
                                         }
                                     }

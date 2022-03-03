@@ -32,7 +32,6 @@ public class TransPDFImpl implements TransFile {
             PDDocument document = PDDocument.load(file);
             PDFTextStripper pdfStripper = new PDFTextStripper();
             String text = pdfStripper.getText(document);
-            System.out.println(text);
             if (StrUtil.isNotBlank(text) && text.trim().length() > 0) return true;
             document.close();
             return false;

@@ -68,7 +68,6 @@ public class CoreApi {
                 if (code == 200) {
                     JSONArray objects = jsonObject.getJSONArray("list");
                     ArrayList<List<String>> lists = new ArrayList<>();
-                    List<String> keysList = new ArrayList<String>(10);
                     for (int i = 0; i < objects.size(); i++) {
                         JSONArray jsonArray = objects.getJSONArray(i);
                         List<String> strings = jsonArray.toJavaList(String.class);

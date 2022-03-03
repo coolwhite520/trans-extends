@@ -59,10 +59,12 @@ public class TransFactoryImpl implements TransFactory {
             } else if (ext.equalsIgnoreCase("eml")) {
                 // 直接调用plugins进行翻译处理
                 return transEmail;
+            } else {//其他类型的文件让tika解析
+                return transTika;
             }
-        } else {//其他类型的文件让tika解析
-            return transTika;
+        } else {
+            String format = String.format("未知的文件类型：transType：%d", transType);
+            throw new RuntimeException(format);
         }
-        return null;
     }
 }
