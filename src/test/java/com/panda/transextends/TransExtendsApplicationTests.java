@@ -130,8 +130,8 @@ class TransExtendsApplicationTests {
 
     @Test
     void testEml() {
-        String strFile = "/Users/baiyang/Desktop/翻译资源/eml/今天.eml";
-        String desFile = "/Users/baiyang/Desktop/翻译资源/eml/今天_out.eml";
+        String strFile = "/Users/baiyang/Desktop/翻译资源/eml/pa.eml";
+        String desFile = "/Users/baiyang/Desktop/翻译资源/eml/pa_out.eml";
         String dir = "/Users/baiyang/Desktop/翻译资源/eml/";
         try (InputStream inputStream = new FileInputStream(strFile)) {
             Properties props = new Properties();
@@ -165,8 +165,8 @@ class TransExtendsApplicationTests {
             //获取不到html内容时，则获取非html文本内容
             if (html == null || html.length() == 0) {
                 String plain = parser.getPlainContent();
-                plain = "word";
-                msg.setContent(plain, "text/plain");
+                plain = "中国";
+                msg.setContent(plain, "text/plain; charset=utf-8");
             } else {
                 //解析html 并翻译
                 Document document = Jsoup.parse(html);
@@ -175,7 +175,7 @@ class TransExtendsApplicationTests {
                 for (Element tag : tags) {
                     for (Node child : tag.childNodes()) {
                         if (child instanceof TextNode && !((TextNode) child).isBlank()) {
-                            ((TextNode) child).text("word"); //replace to word
+                            ((TextNode) child).text("中国人"); //replace to word
                         }
                     }
                 }
@@ -197,7 +197,7 @@ class TransExtendsApplicationTests {
                 // 添加正文
                 BodyPart textBody = new MimeBodyPart();
                 contentMulti.addBodyPart(textBody);
-                textBody.setContent(document.html(), "text/html");
+                textBody.setContent(document.html(), "text/html; charset=utf-8");
 
                 //添加html图片
                 for (String contentId : contentIds) {

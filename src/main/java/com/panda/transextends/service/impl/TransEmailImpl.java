@@ -123,7 +123,7 @@ public class TransEmailImpl implements TransFile {
                     }
                 }
             }
-            msg.setContent(stringBuilder.toString(), "text/plain");
+            msg.setContent(stringBuilder.toString(), "text/plain; charset=utf-8");
         } else {
             //解析html 并翻译
             Document document = Jsoup.parse(html);
@@ -162,7 +162,7 @@ public class TransEmailImpl implements TransFile {
             // 添加正文
             BodyPart textBody = new MimeBodyPart();
             contentMulti.addBodyPart(textBody);
-            textBody.setContent(document.html(), "text/html");
+            textBody.setContent(document.html(), "text/html; charset=utf-8");
 
             //添加html图片
             for (String contentId : contentIds) {
