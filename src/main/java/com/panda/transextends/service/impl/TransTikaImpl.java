@@ -36,46 +36,36 @@ public class TransTikaImpl implements TransFile {
     @Override
     public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         File file = new File(srcFile);
-        FileInputStream fileInputStream = new FileInputStream(file);
-        Tika tika = new Tika();
-        String content = tika.parseToString(fileInputStream);
+        try (FileInputStream fileInputStream = new FileInputStream(file);
+             FileOutputStream outStream = new FileOutputStream(desFile);
+             XWPFDocument xwpfDocument = new XWPFDocument()) {
+            Tika tika = new Tika();
+            String content = tika.parseToString(fileInputStream);
+            ArrayList<List<String>> list = coreApi.tokenize(srcLang, content);
+            long total = list.size();
+            long current = 0;
+            int percent = 0;
 
-//        BodyContentHandler textHandler = new BodyContentHandler();
-//        Parser parser= new AutoDetectParser();//当调用parser，AutoDetectParser会自动估计文档MIME类型，此处输入pdf文件，因此可以使用PDFParser
-//        ParseContext context= new ParseContext();
-//        Metadata matadata = new Metadata();//Metadata对象保存了作者，标题等元数据
-//        parser.parse(fileInputStream, textHandler, matadata, context);//执行解析过程
-//        System.out.println("Body: "+ textHandler.toString());//从textHandler打印正文
-
-
-        ArrayList<List<String>> list = coreApi.tokenize(srcLang, content);
-        long total = list.size();
-        long current = 0;
-        int percent = 0;
-        XWPFDocument xwpfDocument = new XWPFDocument();
-        for (List<String> strings : list) {
-            XWPFParagraph paragraph = xwpfDocument.createParagraph();
-            for (String s : strings) {
-                XWPFRun run = paragraph.createRun();
-                if (StrUtil.isBlank(s))
-                    run.setText(s, 0);
-                else {
-                    String transContent = coreApi.translate(srcLang, desLang, s);
-                    run.setText(transContent, 0);
-                    current++;
-                    if (percent != 100 * current / total) {
-                        percent = (int) (100 * current / total);
-                        if (percent > 100) percent = 100;
-                        recordDAO.updateProgress(rowId, percent);
+            for (List<String> strings : list) {
+                XWPFParagraph paragraph = xwpfDocument.createParagraph();
+                for (String s : strings) {
+                    XWPFRun run = paragraph.createRun();
+                    if (StrUtil.isBlank(s))
+                        run.setText(s, 0);
+                    else {
+                        String transContent = coreApi.translate(srcLang, desLang, s);
+                        run.setText(transContent, 0);
+                        current++;
+                        if (percent != 100 * current / total) {
+                            percent = (int) (100 * current / total);
+                            if (percent > 100) percent = 100;
+                            recordDAO.updateProgress(rowId, percent);
+                        }
                     }
                 }
             }
+            xwpfDocument.write(outStream);
+            return true;
         }
-        FileOutputStream outStream = null;
-        outStream = new FileOutputStream(desFile);
-        xwpfDocument.write(outStream);
-        xwpfDocument.close();
-        outStream.close();
-        return true;
     }
 }

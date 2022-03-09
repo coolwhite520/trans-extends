@@ -39,16 +39,12 @@ public class TransDocImpl implements TransFile {
         return docxBytes;
     }
     private boolean convertDoc2Docx(String srcFile, String desFile) {
-        InputStream is = null;
-        try {
-            is = new FileInputStream(srcFile);
+        try ( InputStream is = new FileInputStream(srcFile);
+              FileOutputStream outStream = new FileOutputStream(desFile)) {
             InputStream convertDocIs2DocxIs = convertDocIs2DocxIs(is);
             XWPFDocument xwpfDocument = new XWPFDocument(convertDocIs2DocxIs);
-            FileOutputStream outStream = null;
-            outStream = new FileOutputStream(desFile);
             xwpfDocument.write(outStream);
             xwpfDocument.close();
-            outStream.close();
             return true;
 
         }catch (Exception e) {

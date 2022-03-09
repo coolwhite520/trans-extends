@@ -61,36 +61,36 @@ public class TransEmailImpl implements TransFile {
 
     public long calculateTotalProgress(String srcLang, String srcFile) throws Exception {
         long total = 0;
-        InputStream inputStream = new FileInputStream(srcFile);
-        Properties props = new Properties();
-        Session session = Session.getDefaultInstance(props, null);
-        MimeMessage msg = new MimeMessage(session, inputStream);
-        MimeMessageParser parser = new MimeMessageParser(msg).parse();
-        String html = parser.getHtmlContent();
-        //获取不到html内容时，则获取非html文本内容
-        if (html == null || html.length() == 0) {
-            String plain = parser.getPlainContent();
-            ArrayList<List<String>> list = coreApi.tokenize(srcLang, plain);
-            for (List<String> strings : list) {
-                for (String string : strings) {
-                    total++;
-                }
-            }
-        } else {
-            //解析html 并翻译
-            Document document = Jsoup.parse(html);
-            Element entry = document.select("body").first();
-            Elements tags = entry.getAllElements();
-            for (Element tag : tags) {
-                for (Node child : tag.childNodes()) {
-                    if (child instanceof TextNode && !((TextNode) child).isBlank()) {
+        try (InputStream is = new FileInputStream(srcFile)) {
+            Properties props = new Properties();
+            Session session = Session.getDefaultInstance(props, null);
+            MimeMessage msg = new MimeMessage(session, is);
+            MimeMessageParser parser = new MimeMessageParser(msg).parse();
+            String html = parser.getHtmlContent();
+            //获取不到html内容时，则获取非html文本内容
+            if (html == null || html.length() == 0) {
+                String plain = parser.getPlainContent();
+                ArrayList<List<String>> list = coreApi.tokenize(srcLang, plain);
+                for (List<String> strings : list) {
+                    for (String string : strings) {
                         total++;
                     }
                 }
+            } else {
+                //解析html 并翻译
+                Document document = Jsoup.parse(html);
+                Element entry = document.select("body").first();
+                Elements tags = entry.getAllElements();
+                for (Element tag : tags) {
+                    for (Node child : tag.childNodes()) {
+                        if (child instanceof TextNode && !((TextNode) child).isBlank()) {
+                            total++;
+                        }
+                    }
+                }
             }
+            return total;
         }
-        inputStream.close();
-        return total;
     }
 
     @Override
@@ -98,43 +98,25 @@ public class TransEmailImpl implements TransFile {
         long total = calculateTotalProgress(srcLang, srcFile);
         long current = 0;
         int percent = 0;
-        InputStream inputStream = new FileInputStream(srcFile);
-        Properties props = new Properties();
-        Session session = Session.getDefaultInstance(props, null);
-        MimeMessage msg = new MimeMessage(session, inputStream);
-        MimeMessageParser parser = new MimeMessageParser(msg).parse();
-        //获取正文
-        String html = parser.getHtmlContent();
-        List<DataSource> dataSources = parser.getAttachmentList();
-        //获取不到html内容时，则获取非html文本内容
-        if (html == null || html.length() == 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-            String plain = parser.getPlainContent();
-            ArrayList<List<String>> list = coreApi.tokenize(srcLang, plain);
-            for (List<String> strings : list) {
-                for (String s : strings) {
-                    String transContent = coreApi.translate(srcLang, desLang, s);
-                    stringBuilder.append(transContent);
-                    current++;
-                    if (percent != 100 * current / total) {
-                        percent = (int) (100 * current / total);
-                        if (percent > 100) percent = 100;
-                        recordDAO.updateProgress(rowId, percent);
-                    }
-                }
-            }
-            msg.setContent(stringBuilder.toString(), "text/plain; charset=utf-8");
-        } else {
-            //解析html 并翻译
-            Document document = Jsoup.parse(html);
-            Element entry = document.select("body").first();
-            Elements tags = entry.getAllElements();
-            for (Element tag : tags) {
-                for (Node child : tag.childNodes()) {
-                    if (child instanceof TextNode && !((TextNode) child).isBlank()) {
-                        String text = ((TextNode) child).text();
-                        text = coreApi.translate(srcLang, desLang, text);
-                        ((TextNode) child).text(text); //replace to word
+        try (InputStream is = new FileInputStream(srcFile);
+             FileOutputStream os = new FileOutputStream(desFile);
+         ) {
+            Properties props = new Properties();
+            Session session = Session.getDefaultInstance(props, null);
+            MimeMessage msg = new MimeMessage(session, is);
+            MimeMessageParser parser = new MimeMessageParser(msg).parse();
+            //获取正文
+            String html = parser.getHtmlContent();
+            List<DataSource> dataSources = parser.getAttachmentList();
+            //获取不到html内容时，则获取非html文本内容
+            if (html == null || html.length() == 0) {
+                StringBuilder stringBuilder = new StringBuilder();
+                String plain = parser.getPlainContent();
+                ArrayList<List<String>> list = coreApi.tokenize(srcLang, plain);
+                for (List<String> strings : list) {
+                    for (String s : strings) {
+                        String transContent = coreApi.translate(srcLang, desLang, s);
+                        stringBuilder.append(transContent);
                         current++;
                         if (percent != 100 * current / total) {
                             percent = (int) (100 * current / total);
@@ -143,50 +125,68 @@ public class TransEmailImpl implements TransFile {
                         }
                     }
                 }
-            }
-            Multipart multipart = new MimeMultipart("mixed");// mixed表示混合性，这里因为有文本，附件，所以是混合的。
-            msg.setContent(multipart);
-
-            BodyPart htmlPart = new MimeBodyPart();
-            multipart.addBodyPart(htmlPart);
-
-            Collection<String> contentIds = parser.getContentIds(); // 获取内嵌html的图片
-            Multipart contentMulti;
-            if (contentIds.size() > 0) {
-                contentMulti = new MimeMultipart("related");//这里的图片和文本是在一起显示的所以他们是关系型的。
+                msg.setContent(stringBuilder.toString(), "text/plain; charset=utf-8");
             } else {
-                contentMulti = new MimeMultipart();
-            }
-            htmlPart.setContent(contentMulti);
+                //解析html 并翻译
+                Document document = Jsoup.parse(html);
+                Element entry = document.select("body").first();
+                Elements tags = entry.getAllElements();
+                for (Element tag : tags) {
+                    for (Node child : tag.childNodes()) {
+                        if (child instanceof TextNode && !((TextNode) child).isBlank()) {
+                            String text = ((TextNode) child).text();
+                            text = coreApi.translate(srcLang, desLang, text);
+                            ((TextNode) child).text(text); //replace to word
+                            current++;
+                            if (percent != 100 * current / total) {
+                                percent = (int) (100 * current / total);
+                                if (percent > 100) percent = 100;
+                                recordDAO.updateProgress(rowId, percent);
+                            }
+                        }
+                    }
+                }
+                Multipart multipart = new MimeMultipart("mixed");// mixed表示混合性，这里因为有文本，附件，所以是混合的。
+                msg.setContent(multipart);
 
-            // 添加正文
-            BodyPart textBody = new MimeBodyPart();
-            contentMulti.addBodyPart(textBody);
-            textBody.setContent(document.html(), "text/html; charset=utf-8");
+                BodyPart htmlPart = new MimeBodyPart();
+                multipart.addBodyPart(htmlPart);
 
-            //添加html图片
-            for (String contentId : contentIds) {
-                BodyPart jpgBody = new MimeBodyPart();
-                DataSource pic = parser.findAttachmentByCid(contentId);
-                jpgBody.setDataHandler(new DataHandler(pic));
-                jpgBody.setHeader("Content-ID", contentId);
-                contentMulti.addBodyPart(jpgBody);
-                dataSources.remove(pic);
-            }
+                Collection<String> contentIds = parser.getContentIds(); // 获取内嵌html的图片
+                Multipart contentMulti;
+                if (contentIds.size() > 0) {
+                    contentMulti = new MimeMultipart("related");//这里的图片和文本是在一起显示的所以他们是关系型的。
+                } else {
+                    contentMulti = new MimeMultipart();
+                }
+                htmlPart.setContent(contentMulti);
 
-            // 添加附件
-            for (DataSource source : dataSources) {
-                MimeBodyPart attachmentPart = new MimeBodyPart();
-                attachmentPart.setDataHandler(new DataHandler(source));
-                attachmentPart.setFileName(source.getName());
-                multipart.addBodyPart(attachmentPart);
+                // 添加正文
+                BodyPart textBody = new MimeBodyPart();
+                contentMulti.addBodyPart(textBody);
+                textBody.setContent(document.html(), "text/html; charset=utf-8");
+
+                //添加html图片
+                for (String contentId : contentIds) {
+                    BodyPart jpgBody = new MimeBodyPart();
+                    DataSource pic = parser.findAttachmentByCid(contentId);
+                    jpgBody.setDataHandler(new DataHandler(pic));
+                    jpgBody.setHeader("Content-ID", contentId);
+                    contentMulti.addBodyPart(jpgBody);
+                    dataSources.remove(pic);
+                }
+
+                // 添加附件
+                for (DataSource source : dataSources) {
+                    MimeBodyPart attachmentPart = new MimeBodyPart();
+                    attachmentPart.setDataHandler(new DataHandler(source));
+                    attachmentPart.setFileName(source.getName());
+                    multipart.addBodyPart(attachmentPart);
+                }
             }
+            msg.saveChanges();
+            msg.writeTo(os);
+            return true;
         }
-        msg.saveChanges();
-        FileOutputStream fileOutputStream = new FileOutputStream(desFile);
-        msg.writeTo(fileOutputStream);
-        inputStream.close();
-        fileOutputStream.close();
-        return true;
     }
 }

@@ -24,37 +24,36 @@ public class TransXlsxImpl implements TransFile {
 
     public long calculateTotalProgress(String srcFile) throws Exception {
         long total = 0;
-        FileInputStream is = null;
-        Workbook workbook = null;
-        String fe = FilenameUtils.getExtension(srcFile);
-        is = new FileInputStream(srcFile);
-        if (fe.equalsIgnoreCase("xlsx")) {
-            workbook = new XSSFWorkbook(is);
-        } else {
-            workbook = new HSSFWorkbook(is);
-        }
-        int numberOfSheets = workbook.getNumberOfSheets();
-        for (int i = 0; i < numberOfSheets; i++) {
-            Sheet sheetAt = workbook.getSheetAt(i);
-            int rows = sheetAt.getLastRowNum();
-            for (int j = 0; j < rows; j++) {
-                Row row = sheetAt.getRow(j);
-                int physicalNumberOfCells = row.getPhysicalNumberOfCells();
-                for (int k = 0; k < physicalNumberOfCells; k++) {
-                    Cell cell = row.getCell(k);
-                    CellType cellType = cell.getCellType();
-                    if (cellType == CellType.STRING) {
-                        String text = cell.getStringCellValue();
-                        if (StrUtil.isNotBlank(text)) {
-                            total++;
+        try (FileInputStream is = new FileInputStream(srcFile)) {
+            Workbook workbook = null;
+            String fe = FilenameUtils.getExtension(srcFile);
+            if (fe.equalsIgnoreCase("xlsx")) {
+                workbook = new XSSFWorkbook(is);
+            } else {
+                workbook = new HSSFWorkbook(is);
+            }
+            int numberOfSheets = workbook.getNumberOfSheets();
+            for (int i = 0; i < numberOfSheets; i++) {
+                Sheet sheetAt = workbook.getSheetAt(i);
+                int rows = sheetAt.getLastRowNum();
+                for (int j = 0; j < rows; j++) {
+                    Row row = sheetAt.getRow(j);
+                    int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+                    for (int k = 0; k < physicalNumberOfCells; k++) {
+                        Cell cell = row.getCell(k);
+                        CellType cellType = cell.getCellType();
+                        if (cellType == CellType.STRING) {
+                            String text = cell.getStringCellValue();
+                            if (StrUtil.isNotBlank(text)) {
+                                total++;
+                            }
                         }
                     }
                 }
             }
+            workbook.close();
+            return total;
         }
-        workbook.close();
-        is.close();
-        return total;
 
     }
 
@@ -64,48 +63,45 @@ public class TransXlsxImpl implements TransFile {
         long total = calculateTotalProgress(srcFile);
         long current = 0;
         int percent = 0;
-        FileInputStream is = null;
-        Workbook workbook = null;
-        String fe = FilenameUtils.getExtension(srcFile);
-        is = new FileInputStream(srcFile);
-        if (fe.equalsIgnoreCase("xlsx")) {
-            workbook = new XSSFWorkbook(is);
-        } else {
-            workbook = new HSSFWorkbook(is);
-        }
-        int numberOfSheets = workbook.getNumberOfSheets();
-        for (int i = 0; i < numberOfSheets; i++) {
-            Sheet sheetAt = workbook.getSheetAt(i);
-            int rows = sheetAt.getLastRowNum();
-            for (int j = 0; j < rows; j++) {
-                Row row = sheetAt.getRow(j);
-                int physicalNumberOfCells = row.getPhysicalNumberOfCells();
-                for (int k = 0; k < physicalNumberOfCells; k++) {
-                    Cell cell = row.getCell(k);
-                    CellType cellType = cell.getCellType();
-                    if (cellType == CellType.STRING) {
-                        String text = cell.getStringCellValue();
-                        if (StrUtil.isNotBlank(text)) {
-                            String transContent = coreApi.translate(srcLang, desLang, text);
-                            cell.setCellValue(transContent);
-                            current++;
-                            if (percent != 100 * current/total) {
-                                percent = (int) (100 * current/total);
-                                if (percent >100) percent = 100;
-                                recordDAO.updateProgress(rowId, percent);
+        try (FileInputStream is = new FileInputStream(srcFile);
+             FileOutputStream os = new FileOutputStream(desFile)) {
+            Workbook workbook = null;
+            String fe = FilenameUtils.getExtension(srcFile);
+            if (fe.equalsIgnoreCase("xlsx")) {
+                workbook = new XSSFWorkbook(is);
+            } else {
+                workbook = new HSSFWorkbook(is);
+            }
+            int numberOfSheets = workbook.getNumberOfSheets();
+            for (int i = 0; i < numberOfSheets; i++) {
+                Sheet sheetAt = workbook.getSheetAt(i);
+                int rows = sheetAt.getLastRowNum();
+                for (int j = 0; j < rows; j++) {
+                    Row row = sheetAt.getRow(j);
+                    int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+                    for (int k = 0; k < physicalNumberOfCells; k++) {
+                        Cell cell = row.getCell(k);
+                        CellType cellType = cell.getCellType();
+                        if (cellType == CellType.STRING) {
+                            String text = cell.getStringCellValue();
+                            if (StrUtil.isNotBlank(text)) {
+                                String transContent = coreApi.translate(srcLang, desLang, text);
+                                cell.setCellValue(transContent);
+                                current++;
+                                if (percent != 100 * current/total) {
+                                    percent = (int) (100 * current/total);
+                                    if (percent >100) percent = 100;
+                                    recordDAO.updateProgress(rowId, percent);
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
             }
+            workbook.write(os);
+            workbook.close();
+            return true;
         }
-        FileOutputStream outStream;
-        outStream = new FileOutputStream(desFile);
-        workbook.write(outStream);
-        workbook.close();
-        outStream.close();
-        is.close();
-        return true;
     }
 }
