@@ -8,6 +8,7 @@ import com.panda.transextends.service.impl.TransTikaImpl;
 import com.panda.transextends.utils.CoreApi;
 import com.panda.transextends.utils.OcrApi;
 import com.panda.transextends.utils.RedisUtil;
+import com.panda.transextends.utils.WordConvert;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.mail.util.MimeMessageParser;
@@ -57,6 +58,13 @@ class TransExtendsApplicationTests {
 
     @Autowired
     TransDocxImpl transDocx;
+
+
+    @Test
+    void wordTestConvert() {
+        final String s = WordConvert.convertToSimplifiedChinese("今天天氣真好呀,good morning");
+        System.out.println(s);
+    }
 
     @Test
     void removeAllPics() throws IOException {
