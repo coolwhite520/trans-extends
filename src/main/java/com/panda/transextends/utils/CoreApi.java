@@ -125,10 +125,10 @@ public class CoreApi {
                 int code = jsonObject.getIntValue("code");
                 if (code == 200) {
                     String data = jsonObject.getString("data");
-                    if(desLang.equals("Chinese")) {
-                        // 由于翻译引擎的问题，导致有些翻译会出现繁体，故转换之
-                        data =  WordConvert.convertToSimplifiedChinese(data);
-                    }
+//                    if(desLang.equals("Chinese")) {
+//                        // 由于翻译引擎的问题，导致有些翻译会出现繁体，故转换之
+//                        data =  WordConvert.convertToSimplifiedChinese(data);
+//                    }
                     redisUtil.set(key, data);
                     return data;
                 }
