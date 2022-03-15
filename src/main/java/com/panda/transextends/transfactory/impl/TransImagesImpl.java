@@ -41,13 +41,7 @@ public class TransImagesImpl implements TransFile {
             if (StrUtil.isBlank(s))
                 run.setText(s, 0);
             else {
-                String transContent = "";
-                if (srcLang.equals(desLang)) {
-                    // 直接输出
-                    transContent = s;
-                } else {
-                    transContent = coreApi.translate(srcLang, desLang, s);
-                }
+                String transContent = coreApi.translate(srcLang, desLang, s);
                 run.setText(transContent, 0);
                 current++;
                 if (percent != 100 * current / total) {
@@ -56,6 +50,7 @@ public class TransImagesImpl implements TransFile {
                     recordDAO.updateProgress(rowId, percent);
                 }
             }
+
         }
         FileOutputStream outStream = null;
         outStream = new FileOutputStream(desFile);

@@ -86,6 +86,10 @@ public class CoreApi {
         }
     }
     public String translate(String srcLang, String desLang, String content) {
+        if (srcLang.equals(desLang)) {
+            // 语言相同就直接返回源字符串
+            return content;
+        }
         String reqUrl = String.format("http://%s:%s/translate", host, port);
         try {
             String keyStr = String.format("src_lang=%s&des_lang=%s&content=%s", srcLang, desLang, content);
