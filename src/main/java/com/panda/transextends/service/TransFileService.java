@@ -50,17 +50,37 @@ public class TransFileService {
                     throw new Exception(format);
                 }
             }
-            String fileExt = record.getFileExt();
-            String outFileExt = "";
-            String desFile = "";
             // 计算sha1
             final String md5 = Md5Util.getMD5(new File(srcFile));
             final String sha1 = String.format("%s&%s&%s", md5, record.getSrcLang(), record.getDesLang());
-            // 如果srcLang 和 desLang相同，需要特殊处理，图片和pdf仅仅需要ocr，其他类型的文件copy就行
-            if (record.getSrcLang().equals(record.getDesLang())) {
-                if (record.getTransType() == 1 || fileExt.equalsIgnoreCase(".pdf")) {
+
+            // 确定下来输出文件的扩展名
+            String fileExt = record.getFileExt();
+            String outFileExt = "";
+            String desFile = "";
+            if (record.getTransType() == 1) {
+                outFileExt = ".docx";
+            } else {
+                //文档类别的文件仅仅保留格式的类型为docx 、pptx 、 xlsx 、 eml
+                if (fileExt.equalsIgnoreCase(".docx") || fileExt.equalsIgnoreCase(".doc")){
                     outFileExt = ".docx";
+                } else if (fileExt.equalsIgnoreCase(".pptx")){
+                    outFileExt = ".pptx";
+                } else if (fileExt.equalsIgnoreCase(".ppt")) {
+                    outFileExt = ".ppt";
+                } else if (fileExt.equalsIgnoreCase(".xlsx")) {
+                    outFileExt = ".xlsx";
+                } else if (fileExt.equalsIgnoreCase(".xls")) {
+                    outFileExt = ".xls";
+                } else if (fileExt.equalsIgnoreCase(".eml")) {
+                    outFileExt = ".eml";
                 } else {
+                    outFileExt = ".docx";
+                }
+            }
+            // 如果srcLang 和 desLang相同，copy就行, 至于pdf和图片仅仅ocr就行（core模块中的translate接口函数已经添加了语言相同的判断，直接返回输入字符串）
+            if (record.getSrcLang().equals(record.getDesLang())) {
+                if (record.getTransType() != 1 && !fileExt.equalsIgnoreCase(".pdf")) {
                     // 直接复制文件
                     outFileExt = fileExt;
                     desFile = String.format("%s/%s%s", outputAbsPath, record.getFileName(), outFileExt);
@@ -71,28 +91,6 @@ public class TransFileService {
                     recordDAO.updateRecordState(id, TransStatus.TransTranslateSuccess.getCode(), TransStatus.TransTranslateSuccess.getMessage());
                     recordDAO.updateRecordEndAt(id, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                     return BaseResponse.ok();
-                }
-            } else {
-                // 确定下来输出文件的扩展名
-                if (record.getTransType() == 1) {
-                    outFileExt = ".docx";
-                } else {
-                    //文档类别的文件仅仅保留格式的类型为docx 、pptx 、 xlsx 、 eml
-                    if (fileExt.equalsIgnoreCase(".docx") || fileExt.equalsIgnoreCase(".doc")){
-                        outFileExt = ".docx";
-                    } else if (fileExt.equalsIgnoreCase(".pptx")){
-                        outFileExt = ".pptx";
-                    } else if (fileExt.equalsIgnoreCase(".ppt")) {
-                        outFileExt = ".ppt";
-                    } else if (fileExt.equalsIgnoreCase(".xlsx")) {
-                        outFileExt = ".xlsx";
-                    } else if (fileExt.equalsIgnoreCase(".xls")) {
-                        outFileExt = ".xls";
-                    } else if (fileExt.equalsIgnoreCase(".eml")) {
-                        outFileExt = ".eml";
-                    } else {
-                        outFileExt = ".docx";
-                    }
                 }
             }
             recordDAO.updateRecordOutFileExt(id, outFileExt);
