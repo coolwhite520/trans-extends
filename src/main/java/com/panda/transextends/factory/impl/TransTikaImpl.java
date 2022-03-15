@@ -1,22 +1,15 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.panda.transextends.mapper.RecordDAO;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.tika.Tika;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +17,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 public class TransTikaImpl implements TransFile {
 
     @Autowired
@@ -34,7 +27,7 @@ public class TransTikaImpl implements TransFile {
     RecordDAO recordDAO;
 
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         File file = new File(srcFile);
         try (FileInputStream fileInputStream = new FileInputStream(file);
              FileOutputStream outStream = new FileOutputStream(desFile);

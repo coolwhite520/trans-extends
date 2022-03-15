@@ -1,20 +1,18 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import com.panda.transextends.utils.OcrApi;
 import com.panda.transextends.utils.PluginsApi;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileInputStream;
 
-@Service
+@Component
 public class TransPDFImpl implements TransFile {
 
     @Autowired
@@ -41,7 +39,7 @@ public class TransPDFImpl implements TransFile {
     }
 
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         if (!isEditable(srcFile)) {
             // 如果是不可以编辑的那么就先转化为可编辑的
             String outputFile = ocrApi.ocrmypdf(srcLang, srcFile);

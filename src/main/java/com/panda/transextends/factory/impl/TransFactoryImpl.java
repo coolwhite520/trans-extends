@@ -1,12 +1,12 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
-import com.panda.transextends.service.TransFactory;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFactory;
+import com.panda.transextends.factory.TransFile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 
-@Service
+@Component
 public class TransFactoryImpl implements TransFactory {
 
     @Autowired

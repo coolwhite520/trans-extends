@@ -1,15 +1,15 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
 import com.aspose.words.SaveFormat;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 
-@Service
+@Component
 public class TransDocImpl implements TransFile {
 
     @Autowired
@@ -52,7 +52,7 @@ public class TransDocImpl implements TransFile {
         }
     }
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         boolean b = convertDoc2Docx(srcFile, srcFile + "x");
         if (b) return transDocx.translate(rowId, srcLang, desLang, srcFile + "x", desFile);
         return false;

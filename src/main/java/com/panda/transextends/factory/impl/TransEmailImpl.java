@@ -1,9 +1,8 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
 import com.panda.transextends.mapper.RecordDAO;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import com.panda.transextends.utils.CoreApi;
-import com.panda.transextends.utils.PluginsApi;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,11 +11,10 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -28,7 +26,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
 
-@Service
+@Component
 public class TransEmailImpl implements TransFile {
 
     @Autowired
@@ -94,7 +92,7 @@ public class TransEmailImpl implements TransFile {
     }
 
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         long total = calculateTotalProgress(srcLang, srcFile);
         long current = 0;
         int percent = 0;

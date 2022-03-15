@@ -1,22 +1,21 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.pojo.OcrEntity;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import com.panda.transextends.utils.OcrApi;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
 import java.util.List;
 
-@Service
+@Component
 public class TransImagesImpl implements TransFile {
 
     @Autowired
@@ -29,7 +28,7 @@ public class TransImagesImpl implements TransFile {
     CoreApi coreApi;
 
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         List<OcrEntity> list = ocrApi.extract(srcLang, srcFile);
         long total = list.size();
         long current = 0;

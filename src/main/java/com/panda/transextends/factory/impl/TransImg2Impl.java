@@ -1,13 +1,13 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import com.panda.transextends.utils.OcrApi;
 import com.panda.transextends.utils.PluginsApi;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class TransImg2Impl implements TransFile {
 
     @Autowired
@@ -20,7 +20,7 @@ public class TransImg2Impl implements TransFile {
     TransDocxImpl transDocx;
 
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         // 把图片转为可编辑的pdf
         String outputFile = ocrApi.ocrmyimg(srcLang, srcFile);
         if (outputFile.equals("")) {

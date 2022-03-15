@@ -1,20 +1,20 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-@Service
+@Component
 public class TransXlsxImpl implements TransFile {
     @Autowired
     CoreApi coreApi;
@@ -59,7 +59,7 @@ public class TransXlsxImpl implements TransFile {
 
 
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         long total = calculateTotalProgress(srcFile);
         long current = 0;
         int percent = 0;

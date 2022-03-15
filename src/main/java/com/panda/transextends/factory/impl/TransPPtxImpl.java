@@ -1,25 +1,24 @@
-package com.panda.transextends.service.impl;
+package com.panda.transextends.factory.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
-import com.panda.transextends.service.TransFile;
+import com.panda.transextends.factory.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTable;
 import org.apache.poi.hslf.usermodel.HSLFTableCell;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
-import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.xslf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.List;
 
-@Service
+@Component
 public class TransPPtxImpl implements TransFile {
     @Autowired
     CoreApi coreApi;
@@ -90,7 +89,7 @@ public class TransPPtxImpl implements TransFile {
     }
 
     @Override
-    public boolean translate(int rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
+    public boolean translate(long rowId, String srcLang, String desLang, String srcFile, String desFile) throws Exception {
         long total = calculateTotalProgress(srcFile);
         long current = 0;
         int percent = 0;
