@@ -1,8 +1,8 @@
-package com.panda.transextends.factory.impl;
+package com.panda.transextends.transfactory.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
-import com.panda.transextends.factory.TransFile;
+import com.panda.transextends.transfactory.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,8 +160,14 @@ public class TransDocxImpl implements TransFile {
                 for (XWPFRun run : paragraph.getRuns()) {
                     String text = run.getText(0);
                     if (StrUtil.isNotBlank(text)) {
-                        String transContent = coreApi.translate(srcLang, desLang, text);
-                        transContent += " ";
+                        String transContent = "";
+                        if (srcLang.equals(desLang)) {
+                            // 语言相同就直接copy
+                            transContent = text;
+                        } else {
+                            transContent = coreApi.translate(srcLang, desLang, text);
+                            transContent += " ";
+                        }
                         run.setText(transContent, 0);
                         run.setText(transContent, 0);
                         current++;
@@ -188,8 +194,14 @@ public class TransDocxImpl implements TransFile {
                                 for (XWPFRun run : paragraph.getRuns()) {
                                     String text2 = run.getText(0);
                                     if (StrUtil.isNotBlank(text2)) {
-                                        String transContent = coreApi.translate(srcLang, desLang, text2);
-                                        transContent += " ";
+                                        String transContent = "";
+                                        if (srcLang.equals(desLang)) {
+                                            // 语言相同就直接copy
+                                            transContent = text2;
+                                        } else {
+                                            transContent = coreApi.translate(srcLang, desLang, text2);
+                                            transContent += " ";
+                                        }
                                         run.setText(transContent, 0);
                                         run.setText(transContent, 0);
                                         current++;

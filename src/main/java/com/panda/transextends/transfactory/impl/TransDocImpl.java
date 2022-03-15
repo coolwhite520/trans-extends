@@ -1,7 +1,7 @@
-package com.panda.transextends.factory.impl;
+package com.panda.transextends.transfactory.impl;
 
 import com.aspose.words.SaveFormat;
-import com.panda.transextends.factory.TransFile;
+import com.panda.transextends.transfactory.TransFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

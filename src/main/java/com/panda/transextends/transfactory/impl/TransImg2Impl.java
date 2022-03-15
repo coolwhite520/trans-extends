@@ -1,6 +1,6 @@
-package com.panda.transextends.factory.impl;
+package com.panda.transextends.transfactory.impl;
 
-import com.panda.transextends.factory.TransFile;
+import com.panda.transextends.transfactory.TransFile;
 import com.panda.transextends.utils.OcrApi;
 import com.panda.transextends.utils.PluginsApi;
 import org.apache.commons.io.FilenameUtils;

@@ -1,9 +1,9 @@
-package com.panda.transextends.factory.impl;
+package com.panda.transextends.transfactory.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.panda.transextends.mapper.RecordDAO;
 import com.panda.transextends.pojo.OcrEntity;
-import com.panda.transextends.factory.TransFile;
+import com.panda.transextends.transfactory.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import com.panda.transextends.utils.OcrApi;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -41,7 +41,13 @@ public class TransImagesImpl implements TransFile {
             if (StrUtil.isBlank(s))
                 run.setText(s, 0);
             else {
-                String transContent = coreApi.translate(srcLang, desLang, s);
+                String transContent = "";
+                if (srcLang.equals(desLang)) {
+                    // 直接输出
+                    transContent = s;
+                } else {
+                    transContent = coreApi.translate(srcLang, desLang, s);
+                }
                 run.setText(transContent, 0);
                 current++;
                 if (percent != 100 * current / total) {
@@ -50,7 +56,6 @@ public class TransImagesImpl implements TransFile {
                     recordDAO.updateProgress(rowId, percent);
                 }
             }
-
         }
         FileOutputStream outStream = null;
         outStream = new FileOutputStream(desFile);

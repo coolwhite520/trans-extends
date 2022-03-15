@@ -1,8 +1,8 @@
 package com.panda.transextends;
 
 
-import com.panda.transextends.factory.impl.TransDocxImpl;
-import com.panda.transextends.factory.impl.TransTikaImpl;
+import com.panda.transextends.transfactory.impl.TransDocxImpl;
+import com.panda.transextends.transfactory.impl.TransTikaImpl;
 import com.panda.transextends.utils.OcrApi;
 import com.panda.transextends.utils.RedisUtil;
 import com.panda.transextends.utils.WordConvert;

@@ -1,7 +1,7 @@
-package com.panda.transextends.factory.impl;
+package com.panda.transextends.transfactory.impl;
 
 import com.panda.transextends.mapper.RecordDAO;
-import com.panda.transextends.factory.TransFile;
+import com.panda.transextends.transfactory.TransFile;
 import com.panda.transextends.utils.CoreApi;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.jsoup.Jsoup;

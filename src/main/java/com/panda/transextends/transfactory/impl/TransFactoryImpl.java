@@ -1,7 +1,7 @@
-package com.panda.transextends.factory.impl;
+package com.panda.transextends.transfactory.impl;
 
-import com.panda.transextends.factory.TransFactory;
-import com.panda.transextends.factory.TransFile;
+import com.panda.transextends.transfactory.TransFactory;
+import com.panda.transextends.transfactory.TransFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
