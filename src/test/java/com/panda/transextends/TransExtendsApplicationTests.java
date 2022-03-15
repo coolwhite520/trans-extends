@@ -1,8 +1,6 @@
 package com.panda.transextends;
 
 
-import com.panda.transextends.transfactory.impl.TransDocxImpl;
-import com.panda.transextends.transfactory.impl.TransTikaImpl;
 import com.panda.transextends.utils.OcrApi;
 import com.panda.transextends.utils.RedisUtil;
 import com.panda.transextends.utils.WordConvert;
@@ -46,13 +44,8 @@ class TransExtendsApplicationTests {
     RedisUtil redisUtil;
 
     @Autowired
-    TransTikaImpl transTika;
-
-    @Autowired
     OcrApi ocrApi;
 
-    @Autowired
-    TransDocxImpl transDocx;
 
 
     @Test
@@ -61,10 +54,6 @@ class TransExtendsApplicationTests {
         System.out.println(s);
     }
 
-    @Test
-    void removeAllPics() throws IOException {
-        transDocx.removeAllPictures("/Users/baiyang/Desktop/a.docx");
-    }
 
     @Test
     void contextLoads() throws Exception {
