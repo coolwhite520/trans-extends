@@ -67,6 +67,7 @@ public class RedisUtil {
             jedis = jedisPool.getResource();
             return jedis.del(key);
         } catch (Exception e) {
+            e.printStackTrace();
             return 0L;
         } finally {
             if(jedis != null) jedis.close();
@@ -90,6 +91,7 @@ public class RedisUtil {
             ret = jedis.set(key, value, new SetParams().nx().ex(time));
             return ret;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         } finally {
             if(jedis != null) jedis.close();

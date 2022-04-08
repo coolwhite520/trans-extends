@@ -82,6 +82,7 @@ public class CoreApi {
 
         } catch (Exception e) {
             String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            e.printStackTrace();
             throw new RuntimeException(error);
         }
     }
@@ -143,6 +144,7 @@ public class CoreApi {
 
         } catch (Exception e) {
             String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            e.printStackTrace();
             throw new RuntimeException(error);
         }
     }

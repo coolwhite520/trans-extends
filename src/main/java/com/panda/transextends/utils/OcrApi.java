@@ -72,6 +72,7 @@ public class OcrApi {
                 while ((responseLine = br.readLine()) != null) {
                     response.append(responseLine.trim());
                 }
+                con.disconnect();
                 JSONObject jsonObject = JSONObject.parseObject(response.toString());
                 int code = jsonObject.getIntValue("code");
                 if (code == 200) {
@@ -84,6 +85,7 @@ public class OcrApi {
 
         } catch (Exception e) {
             String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            e.printStackTrace();
             throw new RuntimeException(error);
         }
     }
@@ -124,6 +126,7 @@ public class OcrApi {
 
         } catch (Exception e) {
             String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            e.printStackTrace();
             throw new RuntimeException(error);
         }
     }
@@ -166,6 +169,7 @@ public class OcrApi {
 
         } catch (Exception e) {
             String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
+            e.printStackTrace();
             throw new RuntimeException(error);
         }
     }

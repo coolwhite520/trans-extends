@@ -124,6 +124,7 @@ public class TransFileService {
             recordDAO.updateRecordState(id, TransStatus.TransTranslateFailed.getCode(), TransStatus.TransTranslateFailed.getMessage());
             recordDAO.updateRecordError(id, e.toString());
             recordDAO.updateRecordEndAt(id, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            e.printStackTrace();
             return BaseResponse.error(e.toString());
         }
     }

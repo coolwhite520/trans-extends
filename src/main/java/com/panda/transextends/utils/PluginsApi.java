@@ -57,6 +57,7 @@ public class PluginsApi {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
             throw new RuntimeException(error);
         }
@@ -100,6 +101,7 @@ public class PluginsApi {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             String error = String.format("请求异常：URL->%s, ERR->%s", reqUrl, e);
             throw new RuntimeException(error);
         }

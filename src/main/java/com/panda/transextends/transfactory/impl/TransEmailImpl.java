@@ -35,27 +35,6 @@ public class TransEmailImpl implements TransFile {
     @Autowired
     RecordDAO recordDAO;
 
-    //            //邮件唯一id
-//            String messageId = parser.getMimeMessage().getMessageID();
-//            System.out.println(messageId);
-//            //发件人
-//            String from = parser.getFrom();
-//            System.out.println(from);
-//            //收件人列表
-//            List<Address> toArray = parser.getTo();
-//            System.out.println(toArray);
-//            //抄送人列表
-//            List<Address> ccArray = parser.getCc();
-//            System.out.println(ccArray);
-//            //密送人列表
-//            List<Address> bccArray = parser.getBcc();
-//            System.out.println(bccArray);
-//            //邮件发送时间
-//            Date sendDate = parser.getMimeMessage().getSentDate();
-//            System.out.println(sendDate);
-//            //邮件主题
-//            String subject = parser.getSubject();
-//            System.out.println(subject);
 
     public long calculateTotalProgress(String srcLang, String srcFile) throws Exception {
         long total = 0;
@@ -70,7 +49,7 @@ public class TransEmailImpl implements TransFile {
                 String plain = parser.getPlainContent();
                 ArrayList<List<String>> list = coreApi.tokenize(srcLang, plain);
                 for (List<String> strings : list) {
-                    for (String string : strings) {
+                    for (String s : strings) {
                         total++;
                     }
                 }

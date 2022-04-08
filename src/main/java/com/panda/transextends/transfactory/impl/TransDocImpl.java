@@ -48,6 +48,7 @@ public class TransDocImpl implements TransFile {
             return true;
 
         }catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
