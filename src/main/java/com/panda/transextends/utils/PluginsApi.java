@@ -72,6 +72,8 @@ public class PluginsApi {
             con.setRequestProperty("Content-Type", "application/json; utf-8");
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
+            con.setConnectTimeout(60 * 1000);
+            con.setReadTimeout(5 * 60 * 1000);
             Map map = new HashMap<>();
             map.put("row_id", rowId);
             map.put("src_lang", srcLang);
